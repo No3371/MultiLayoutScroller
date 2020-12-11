@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace BAStudio.MultiLayoutScroller
 {
     [System.Serializable]
-    public class MutliScrollerLayoutSchema
+    public class MutliLayoutScrollerLayoutSchema
     {
         public int typeID;
         public List<TypeIDPair> items;

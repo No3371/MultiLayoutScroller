@@ -15,7 +15,7 @@ MonoBehaviour:
   schema:
     views:
     - viewID: 0
-      viewLayoutType: 1
+      viewLayoutType: 0
       autoLayoutSpacing: 0
       autoLayoutPadding:
         m_Left: 0
@@ -25,11 +25,11 @@ MonoBehaviour:
       useUnityPrefabLayout: 0
       layouts:
       - typeID: 0
-        itemIDs: 00000000000000000000000000000000
+        items: []
       - typeID: 1
-        itemIDs: 00000000010000000200000003000000
+        items: []
     - viewID: 1
-      viewLayoutType: 1
+      viewLayoutType: 0
       autoLayoutSpacing: 0
       autoLayoutPadding:
         m_Left: 0
@@ -39,4 +39,4 @@ MonoBehaviour:
       useUnityPrefabLayout: 0
       layouts:
       - typeID: 1
-        itemIDs: 
+        items: []

@@ -6,6 +6,9 @@ namespace BAStudio.MultiLayoutScroller
     public interface IMultiLayoutScrollerDataSource
     {
         int RuntimeVersion { get; }
-        object Pull(int key);
+        object this[int id]
+        {
+            get;
+        }
     }
 }

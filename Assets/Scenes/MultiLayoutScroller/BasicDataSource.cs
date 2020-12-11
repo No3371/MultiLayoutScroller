@@ -18,15 +18,13 @@ namespace BAStudio.MultiLayoutScroller
 
         public int RuntimeVersion => throw new System.NotImplementedException();
 
+        public object this[int id] => items[id];
+
         public void Set (int id, object item)
         {
             if (items == null) items = new Dictionary<int, object>();
             if (items.ContainsKey(id)) items[id] = item;
             else items.Add(id, item);
-        }
-        public object Pull(int id)
-        {
-            return items[id];
         }
     }
     

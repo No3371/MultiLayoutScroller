@@ -10,6 +10,7 @@ namespace BAStudio.MultiLayoutScroller
         public RectTransform RectTransform=> (this.transform as RectTransform);
         [SerializeField] internal RectTransformData[] slotsBaked;
         internal ItemInstance[] items;
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         internal void Assign(int slotIndex, ItemInstance item)
         {
             item.transform.SetParent(RectTransform);
@@ -30,6 +31,7 @@ namespace BAStudio.MultiLayoutScroller
             this.sizeDelta = source.sizeDelta;
         }
         
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public void Overwrite (RectTransform dest)
         {
             dest.anchorMin = this.anchorMin;

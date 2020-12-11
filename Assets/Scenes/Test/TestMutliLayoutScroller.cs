@@ -11,7 +11,7 @@ namespace BAStudio.MultiLayoutScroller
         public ViewInstance[] viewPrefabs;
         public LayoutInstance[] layoutPrefabs;
         public ItemInstance[] itemTypePrefabs;
-        public UnityGroupedMultiLayoutScroller targetScroller;
+        public MultiLayoutScroller targetScroller;
         public GameInfo[] infos;
         public MultiLayoutScrollerSchemaSO madeSchema;
 
@@ -29,13 +29,13 @@ namespace BAStudio.MultiLayoutScroller
             {
                 targetScroller.DefineItemType(i, itemTypePrefabs[i], 5);
             }
-            targetScroller.Load(madeSchema.schema);
             BasicDataSource ds = new BasicDataSource();
             for (var i = 0; i < infos.Length; i++)
             {
                 ds.Set(i, infos[i]);
             }
             targetScroller.DataSource = ds;
+            targetScroller.Load(madeSchema.schema);
             targetScroller.enabled = true;
         }
     }

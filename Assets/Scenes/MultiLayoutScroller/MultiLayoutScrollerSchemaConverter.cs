@@ -63,9 +63,9 @@ namespace BAStudio.MultiLayoutScroller
             return view;
         }
 
-        MutliScrollerLayoutSchema ReadLayout (JsonReader reader)
+        MutliLayoutScrollerLayoutSchema ReadLayout (JsonReader reader)
         {
-            MutliScrollerLayoutSchema layout = new MutliScrollerLayoutSchema();
+            MutliLayoutScrollerLayoutSchema layout = new MutliLayoutScrollerLayoutSchema();
             // Some boxing happening here but should be ok for it's executed bery infrequente.
             if (!reader.Read() || reader.TokenType != JsonToken.PropertyName || (string) reader.Value != KEY_LAYOUT_TYPE) throw new JsonSerializationException("Unexpected json, expecting: (prop name) layout type ID (integer)");
             if (!reader.Read() || reader.TokenType != JsonToken.String) throw new JsonSerializationException("Unexpected json, expecting: prop name of layout type ID (integer)");
