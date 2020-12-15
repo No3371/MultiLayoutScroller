@@ -13,8 +13,9 @@ namespace BAStudio.MultiLayoutScroller
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         internal void Assign(int slotIndex, ItemInstance item)
         {
-            item.transform.SetParent(RectTransform);
+            item.transform.SetParent(RectTransform, false);
             slotsBaked[slotIndex].Overwrite((RectTransform) item.transform);
+            items[slotIndex] = item;
         }
         public bool CullByItem; // Should the scroller scan through and try to load/unload items 
     }

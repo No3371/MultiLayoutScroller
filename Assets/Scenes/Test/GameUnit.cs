@@ -13,10 +13,10 @@ public class GameUnit : ItemInstance
     public override void SetData(object data)
     {
         GameInfo info = (GameInfo) data;
-        favored.color = info.isFavored? new Color(0.7f, 0.2f, 0.2f, 1f) : Color.clear;
-        silver.color = info.silverTierEnabled? new Color(0.8f, 0.8f, 0.8f, 1f) : Color.clear;
-        gold.color = info.goldTierEnabled? new Color(0.1f, 0.8f, 0.8f, 1f) : Color.clear;
-        text.text = info.nameIndex.ToString();
+        if (favored != null) favored.color = info.isFavored? new Color(0.7f, 0.2f, 0.2f, 1f) : Color.clear;
+        if (silver != null) silver.color = info.silverTierEnabled? new Color(0.8f, 0.8f, 0.8f, 1f) : Color.clear;
+        if (gold != null) gold.color = info.goldTierEnabled? new Color(0.1f, 0.8f, 0.8f, 1f) : Color.clear;
+        if (text != null) text.text = info.nameIndex.ToString();
         //TODO: Test alpha vs toggle performance
     }
 

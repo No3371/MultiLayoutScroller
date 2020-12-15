@@ -10,7 +10,7 @@ namespace BAStudio.MultiLayoutScroller
     {
         public RectTransform RectTransform=> (this.transform as RectTransform);
         [HideInInspector] public Dictionary<int, LayoutInstance> layouts;
-        internal void Include (int index, LayoutInstance layout)
+        internal void AddLayout (int index, LayoutInstance layout)
         {
             if (layouts == null) layouts = new Dictionary<int, LayoutInstance>();
             this.layouts[index] = layout;

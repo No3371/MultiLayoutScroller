@@ -8,7 +8,7 @@ namespace BAStudio.MultiLayoutScroller
     [RequireComponent(typeof(LayoutInstance))]
     public class LayoutAuthoring : MonoBehaviour
     {
-        public bool autoBakeOnLoad, destoryBakedPlaceHolders, destroyOnUsed;
+        public bool autoBakeOnLoad, destoryBakedPlaceHolders, destroyOnUsed, removeOnBuild;
         public RectTransform[] slots;
         void Start ()
         {
@@ -31,6 +31,7 @@ namespace BAStudio.MultiLayoutScroller
             }
             if (Application.isPlaying && destroyOnUsed) Destroy(this);
         }
+
     }
 
 }
