@@ -146,4 +146,5 @@ MonoBehaviour:
   autoBakeOnLoad: 0
   destoryBakedPlaceHolders: 0
   destroyOnUsed: 0
+  removeOnBuild: 0
   slots: []

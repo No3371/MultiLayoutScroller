@@ -113,6 +113,7 @@ MonoBehaviour:
   autoBakeOnLoad: 0
   destoryBakedPlaceHolders: 0
   destroyOnUsed: 0
+  removeOnBuild: 0
   slots:
   - {fileID: 5790512522555682697}
   - {fileID: 610218339239941496}
@@ -140,7 +141,7 @@ MonoBehaviour:
   m_Color: {r: 0.44139376, g: 0.8584906, b: 0.8451449, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 0
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
