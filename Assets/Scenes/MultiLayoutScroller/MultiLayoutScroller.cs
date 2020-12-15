@@ -368,7 +368,8 @@ namespace BAStudio.MultiLayoutScroller
             if (root == null) root = this.transform.root.transform as RectTransform;
 
             //Updating Recyclable view bounds since it can change with resolution changes.
-            if (!Screen.currentResolution.Equals(resolutionCache))
+            var curRes = Screen.currentResolution;
+            if (curRes.width != resolutionCache.width | curRes.height != resolutionCache.height)
             {
                 SetRecyclingBounds();
                 resolutionCache = Screen.currentResolution;

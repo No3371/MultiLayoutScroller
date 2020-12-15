@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef1fca1ee4769b54c8d4acae847d53d1, type: 3}
+  m_Name: View2
+  m_EditorClassIdentifier: 
+  viewSchema:
+    viewID: 2
+    viewLayoutType: 0
+    autoLayoutSpacing: 0
+    autoLayoutPadding:
+      m_Left: 0
+      m_Right: 0
+      m_Top: 0
+      m_Bottom: 0
+    useUnityPrefabLayout: 0
+    layouts: []
+  layoutAssets:
+  - {fileID: 11400000, guid: 4d5901d20f2ca08418daaccf1298db1d, type: 2}
+  - {fileID: 0}
