@@ -217,6 +217,7 @@ namespace BAStudio.MultiLayoutScroller
             for (int i = 0; i < initPoolSize - 1; i++)
             {
                 ItemInstance ii = GameObject.Instantiate(runtimePrefab);
+                ii.dataID = new TypeIDPair { type = typeID, dataID = -1 };
                 ii.RectTransform.SetParent(hidden.transform, false);
                 stack.Push(ii);
             }
@@ -317,7 +318,7 @@ namespace BAStudio.MultiLayoutScroller
 
         
         protected Bounds recyclingleViewBounds;
-        protected float RecyclingThreshold = .2f; //Threshold for recycling above and below viewport
+        protected float RecyclingThreshold = .1f; //Threshold for recycling above and below viewport
         //Temps, Flags
         protected Vector3[] recyclingViewBoundsCorners, viewInstanceWorldCorners, tempWorldCorners;
         protected bool _working;
@@ -628,8 +629,6 @@ namespace BAStudio.MultiLayoutScroller
             for (var i = 0; i < li.items.Length; i++)
             {
                 li.items[i].CanvasGroup.alpha = 0;
-                itemPool[activeViewSchema.layouts[layoutIndex].items[i].type].Push(li.items[i]);
-                li.items[i] = null;
             }
         }
 
@@ -638,13 +637,27 @@ namespace BAStudio.MultiLayoutScroller
         {
             MutliLayoutScrollerLayoutSchema targetSchema = activeViewSchema.layouts[layoutIndex];
             if (li.items == null || li.items.Length != targetSchema.items.Count) li.items = new ItemInstance[targetSchema.items.Count];
-            var schemaItems = activeViewSchema.layouts[layoutIndex].items;
+            var schemaItems = targetSchema.items;
             for (var i = 0; i < targetSchema.items.Count; i++)
             {
-                ItemInstance ii = PopItem(targetSchema.items[i].type);
-                li.Assign(i, ii);
-                ii.SetData(DataSource[schemaItems[i].dataID]);
-                ii.CanvasGroup.alpha = 1;
+                ItemInstance ii;
+
+                if (li.items[i] == null || li.items[i].dataID.type == schemaItems[i].type)
+                {
+                    if (li.items[i] != null)
+                        itemPool[li.items[i].dataID.type].Push(li.items[i]);
+
+                    ii = PopItem(schemaItems[i].type);
+                    ii.dataID = schemaItems[i];
+                    li.Assign(i, ii);
+                }
+                else
+                {
+                    li.AssignSameItemPrefabType(i);
+                }
+                
+                li.items[i].SetData(DataSource[schemaItems[i].dataID]);
+                li.items[i].CanvasGroup.alpha = 1;
             }
         }
 

@@ -20,6 +20,12 @@ namespace BAStudio.MultiLayoutScroller
             slotsBaked[slotIndex].Overwrite((RectTransform) item.transform);
             items[slotIndex] = item;
         }
+
+        internal void AssignSameItemPrefabType (int slotIndex)
+        {
+            slotsBaked[slotIndex].Overwrite((RectTransform) items[slotIndex].transform);
+        }
+
         public bool CullByItem; // Should the scroller scan through and try to load/unload items 
 
         /// <summary>
@@ -54,6 +60,7 @@ namespace BAStudio.MultiLayoutScroller
             dest.anchoredPosition = this.anchoredPosition;
             dest.sizeDelta = this.sizeDelta;
         }
+
     }
     // LayoutName: { 0, 1, 4, 2, 11 ,155}  => The layout pulls 
 

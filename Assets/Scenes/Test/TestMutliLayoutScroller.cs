@@ -23,11 +23,11 @@ namespace BAStudio.MultiLayoutScroller
             }
             for (var i = 0; i < layoutPrefabs.Length; i++)
             {
-                targetScroller.DefineLayoutType(i, layoutPrefabs[i], default);
+                targetScroller.DefineLayoutType(i, layoutPrefabs[i], new LayoutTypeMeta { initPoolSize = 5 });
             }
             for (var i = 0; i < itemTypePrefabs.Length; i++)
             {
-                targetScroller.DefineItemType(i, itemTypePrefabs[i], 5);
+                targetScroller.DefineItemType(i, itemTypePrefabs[i], 10);
             }
             BasicDataSource ds = new BasicDataSource();
             for (var i = 0; i < infos.Length; i++)
