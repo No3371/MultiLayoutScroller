@@ -10,23 +10,26 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.UI;
 
+
 namespace BAStudio.MultiLayoutScroller
 {
+
     // A MultiLayoutScroller should be able to load its required meta from json and can sustain flawed value
-    public class MultiLayoutScroller : ScrollRect
+    public class MultiLayoutScroller : ScrollRect, IViewTransitionHost
     {
         const bool _debug = false;
-        static readonly Vector2 _awayPosition = new Vector2(-195623, 44236);
         public IMultiLayoutScrollerDataSource DataSource;
         protected RectTransform PrototypeCell;
         protected int maxLayoutInstances, maxItemInstances;
         protected MultiLayoutScrollerSchema activeSchema;
-        protected int activeViewIndex, layoutIndexMin, layoutIndexMax;
+        protected int activeViewIndex, layoutIndexMin = -1, layoutIndexMax = -1;
         protected MutliScrollerViewSchema activeViewSchema => activeSchema.views[activeViewIndex];
         protected ViewInstance activeViewInstance;
         protected Vector2 _prevAnchoredPos;
         protected CanvasGroup hidden;
         Vector4 pooledLayoutPaddingWSAD;
+        public int maxLayoutLoadingPerFrame = 1;
+        bool shouldLoadMore = false;
         RectTransform root;
         protected override void Awake ()
         {
@@ -54,14 +57,11 @@ namespace BAStudio.MultiLayoutScroller
 
         public void Load (MultiLayoutScrollerSchema schema)
         {
-            onValueChanged?.RemoveListener(OnValueChanged);
-            if (viewObjects.Count == 0)
-                throw new ArgumentNullException("You have to define at least 1 view first!");
-
             var v = schema.views;
             for (var vIndex = 0; vIndex < v.Count; vIndex++)
             {
                 var lo = v[vIndex].layouts;
+                if (!viewObjects.ContainsKey(v[vIndex].viewID)) Debug.LogErrorFormat("View {0} is undefined.", v[vIndex].viewID);
                 for (var loIndex = 0; loIndex < lo.Count; loIndex++)
                 {
                     if (!layoutPool.ContainsKey(lo[loIndex].typeID))
@@ -79,8 +79,95 @@ namespace BAStudio.MultiLayoutScroller
                 }
             }
             activeSchema = schema;
-            activeViewIndex = 0;
-            InitView(viewObjects[activeViewSchema.viewID], ()=> onValueChanged?.AddListener(OnValueChanged));
+            activeViewIndex = -1;
+        }
+
+        int viewSwitchProgress = 0;
+        
+        public void SwitchToLoadedViewStage1 (int index)
+        {
+            onValueChanged?.RemoveListener(OnValueChangedHandler);
+            if (viewObjects.Count == 0)
+                throw new ArgumentNullException("You have to define at least 1 view first!");
+
+            ViewInstance nextView = viewObjects[index];
+            activeViewIndex = index;
+            if (activeViewInstance != null)
+            {
+                viewSwitchProgress = 1;
+                activeViewInstance.OnSwitchingAway(this);
+                nextView.OnSwitchingTo(this);
+            }
+            else
+            {
+                viewSwitchProgress = 3;
+                SwitchToLoadedViewStage2();
+            }
+        }
+
+        public void SwitchToLoadedViewStage2 ()
+        {
+            if (activeViewInstance != null)
+            {
+                PoolActiveView();
+                activeViewInstance.OnSwitchedAway();
+            }
+            ViewInstance view = viewObjects[activeViewIndex];
+            activeViewInstance = view;
+            SetRecyclingBounds();
+            activeViewInstance.RectTransform.GetWorldCorners(viewInstanceWorldCorners);
+            if (root == null) root = this.transform.root.transform as RectTransform;
+            
+            //Setting up container and bounds
+            content = view.RectTransform;
+            content.SetParent(viewport, false);
+            // Make active view match viewport
+
+            if (layoutIndexMax != -1 || layoutIndexMin != -1) Debug.LogErrorFormat("Active layouts still present?");
+            layoutIndexMin = -1;
+            layoutIndexMax = -1;
+
+            switch (activeViewSchema.viewLayoutType)
+            {
+                case ViewLayoutType.AutoHorizontal:
+                {
+                    content.anchorMin = Vector2.right; // 1, 0
+                    content.anchorMax = Vector2.one;   // 1, 1
+                    content.pivot = Vector2.up;
+                    content.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, CalculateViewSize().x);
+                    PopLayoutRight(false);
+                    OnScrolledRight();
+                    break;
+                }
+                case ViewLayoutType.AutoVertical:
+                {
+                    content.anchorMin = Vector2.up;    // 0, 1
+                    content.anchorMax = Vector2.one;   // 1, 1
+                    content.pivot = Vector2.up;
+                    content.sizeDelta = Vector2.zero;
+                    content.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, 0, CalculateViewSize().y);
+                    break;
+                }
+                default:
+                    throw new System.NotImplementedException("Selected view layout type is not suppported!");
+            }
+
+            #if DEBUG_MULTILAYOUT
+                InitDebug();
+                UpdateDebug();
+            #endif
+            view.OnSwitchedTo();
+            onValueChanged?.AddListener(OnValueChangedHandler);
+        }
+
+        public void PoolActiveView ()
+        {
+            while (layoutIndexMax >= layoutIndexMin )
+            {
+                PoolLayoutInstance(activeViewInstance.layouts[layoutIndexMax], layoutIndexMax);
+                layoutIndexMax--;
+            }
+            layoutIndexMin = layoutIndexMax = -1;
         }
 
         public void DefineViewType (int typeID, ViewInstance prefab) 
@@ -147,100 +234,7 @@ namespace BAStudio.MultiLayoutScroller
         {
             if (activeSchema == null) throw new System.ArgumentNullException();
             _prevAnchoredPos = base.content.anchoredPosition;
-            onValueChanged.RemoveListener(OnValueChanged);
-        }
-
-        public void Populate ()
-        {
-            
-        }
-        /// <summary>
-        /// Corotuine for initiazation.
-        /// Using coroutine for init because few UI stuff requires a frame to update
-        /// </summary>
-        /// <param name="onInitialized">callback when init done</param>
-        /// <returns></returns>
-        // protected virtual IEnumerator InitView(ViewInstance view, Action onInitialized)
-        // {
-        //     //Setting up container and bounds
-        //     content = view.RectTransform;
-        //     content.SetParent(viewport, false);
-        //     // Make active view match viewport
-        //     content.anchorMin = Vector2.zero;
-        //     content.anchorMax = Vector2.one; 
-        //     content.pivot = Vector2.up;
-        //     content.sizeDelta = Vector2.zero;
-
-        //     yield return null;
-        //     SetRecyclingBounds();
-
-        //     minActiveLayoutIndex = 0;
-        //     maxActiveLayoutIndex = activeSchema.views[activeViewIndex].layouts.Count;
-
-        //     switch (activeViewSchema.viewLayoutType)
-        //     {
-        //         case ViewLayoutType.AutoHorizontal:
-        //         {
-        //             activeViewInstance.RectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, CalculateViewSize().x);
-        //             break;
-        //         }
-        //         case ViewLayoutType.AutoVertical:
-        //         {
-        //             activeViewInstance.RectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, CalculateViewSize().y);
-        //             break;
-        //         }
-        //         default:
-        //             throw new System.NotImplementedException();
-        //     }
-
-        //     activeViewInstance = view;
-        //     if (onInitialized != null) onInitialized();
-        // }
-        protected virtual void InitView(ViewInstance view, Action onInitialized)
-        {
-            //Setting up container and bounds
-            content = view.RectTransform;
-            activeViewInstance = view;
-            content.SetParent(viewport, false);
-            // Make active view match viewport
-            SetRecyclingBounds();
-            activeViewInstance.RectTransform.GetWorldCorners(viewInstanceWorldCorners);
-            if (root == null) root = this.transform.root.transform as RectTransform;
-
-
-            layoutIndexMin = -1;
-            layoutIndexMax = -1;
-
-            switch (activeViewSchema.viewLayoutType)
-            {
-                case ViewLayoutType.AutoHorizontal:
-                {
-                    content.anchorMin = Vector2.right; // 1, 0
-                    content.anchorMax = Vector2.one;   // 1, 1
-                    content.pivot = Vector2.up;
-                    content.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, CalculateViewSize().x);
-                    PopLayoutRight(false);
-                    OnScrolledRight();
-                    break;
-                }
-                case ViewLayoutType.AutoVertical:
-                {
-                    content.anchorMin = Vector2.up;    // 0, 1
-                    content.anchorMax = Vector2.one;   // 1, 1
-                    content.pivot = Vector2.up;
-                    content.sizeDelta = Vector2.zero;
-                    content.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, 0, CalculateViewSize().y);
-                    break;
-                }
-                default:
-                    throw new System.NotImplementedException("Selected view layout type is not suppported!");
-            }
-
-            #if DEBUG_MULTILAYOUT
-                InitDebug();
-                UpdateDebug();
-            #endif
-            if (onInitialized != null) onInitialized();
+            onValueChanged.RemoveListener(OnValueChangedHandler);
         }
 
         protected virtual Vector2 CalculateViewSize ()
@@ -326,7 +320,7 @@ namespace BAStudio.MultiLayoutScroller
         protected float RecyclingThreshold = .2f; //Threshold for recycling above and below viewport
         //Temps, Flags
         protected Vector3[] recyclingViewBoundsCorners, viewInstanceWorldCorners, tempWorldCorners;
-        protected bool _recycling;
+        protected bool _working;
         UnityEngine.Resolution resolutionCache;
 
         /// <summary>
@@ -346,7 +340,7 @@ namespace BAStudio.MultiLayoutScroller
         /// Recycling entry point for recyling systems.
         /// </summary>
         /// <param name="direction">scroll direction</param>
-        public void OnValueChanged(Vector2 normalizedPos)
+        public void OnValueChangedHandler(Vector2 normalizedPos)
         {
             Vector2 dir = base.content.anchoredPosition - _prevAnchoredPos;
             m_ContentStartPosition += UpdateContentStartPos(dir);
@@ -357,6 +351,16 @@ namespace BAStudio.MultiLayoutScroller
             #endif
         }
 
+        void Update ()
+        {
+            if (shouldLoadMore && activeViewInstance != null)
+            {
+                int streak = 0;
+                while (shouldLoadMore)
+                    PopRight(ref streak, ref pooledLayoutPaddingWSAD.z, ref pooledLayoutPaddingWSAD.w, activeViewSchema.autoLayoutSpacing);
+            }
+        }
+
         /// <summary>
         /// Recyling entry point
         /// </summary>
@@ -364,7 +368,7 @@ namespace BAStudio.MultiLayoutScroller
         /// <returns></returns>
         public Vector2 UpdateContentStartPos(Vector2 direction)
         {
-            if (_recycling) return Vector2.zero;
+            if (_working) return Vector2.zero;
             if (root == null) root = this.transform.root.transform as RectTransform;
 
             //Updating Recyclable view bounds since it can change with resolution changes.
@@ -406,7 +410,7 @@ namespace BAStudio.MultiLayoutScroller
         }
         protected virtual void OnScrolledRight()
         {
-            _recycling = true;
+            _working = true;
             float leftPadding = pooledLayoutPaddingWSAD.z, rightPadding = pooledLayoutPaddingWSAD.w;
             float spacing = activeViewSchema.autoLayoutSpacing;
             // if (_debug) Debug.LogFormat("OnScrollRight, leftPadding: {0}, rightPadding: {1}, spacing: {2}", leftPadding, rightPadding, spacing);
@@ -435,11 +439,15 @@ namespace BAStudio.MultiLayoutScroller
             else poppingPos = leftPadding;
             //  <<< LOAD
             // if (_debug) Debug.LogFormat("Popping x start: {0} / bound x : {1} ~ {2}", viewInstanceCorners[0].x + poppingPos, innerRecyclingViewBounds.min.x, innerRecyclingViewBounds.max.x);
+            int loaded = 0;
             while (layoutIndexMax < activeViewSchema.layouts.Count - 1)
             {
                 activeViewInstance.layouts[layoutIndexMax].RectTransform.GetWorldCorners(tempWorldCorners);
                 if (tempWorldCorners[2].x + (spacing) * root.localScale.x > recyclingleViewBounds.max.x)
+                {
+                    shouldLoadMore = false;
                     break;
+                }
                 layoutIndexMax++;
                 LayoutInstance li = PopLayout(activeViewSchema.layouts[layoutIndexMax].typeID);
                 // if (_debug) Debug.LogFormat("Popping layout {0}/{1}, it's type {2} and has {3} items", newLayoutIndex, activeViewSchema.layouts.Count - 1, activeViewSchema.layouts[newLayoutIndex].typeID ,activeViewSchema.layouts[newLayoutIndex].items.Count);
@@ -447,20 +455,27 @@ namespace BAStudio.MultiLayoutScroller
                 FillItemsIntoLayout(li, layoutIndexMax);
                 activeViewInstance.AddLayout(layoutIndexMax, li);
                 li.RectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, (activeViewInstance.RectTransform.rect.width - rightPadding + spacing), li.RectTransform.rect.width);
+            li.CanvasGroup.alpha = 1;
                 rightPadding -= (li.transform as RectTransform).rect.width;
                 if (activeViewInstance.layouts.Count > 1) rightPadding -= spacing; // There's no spacing if there's only 1 layout
                 if (_debug) Debug.LogFormat(" <<< LOAD | Active layouts: {0} ~ {1}", layoutIndexMin, layoutIndexMax);
+                loaded++;
+                if (loaded >= maxLayoutLoadingPerFrame)
+                {
+                    shouldLoadMore = true;
+                    break;
+                }
             }
 
             
             pooledLayoutPaddingWSAD.z = leftPadding;
             pooledLayoutPaddingWSAD.w = rightPadding;
 
-            _recycling = false;
+            _working = false;
         }
         protected virtual void OnScrolledLeft()
         {
-            _recycling = true;
+            _working = true;
             float leftPadding = pooledLayoutPaddingWSAD.z, rightPadding = pooledLayoutPaddingWSAD.w;
             float spacing = activeViewSchema.autoLayoutSpacing;
             // if (_debug) Debug.LogFormat("OnScrollLeft, leftPadding: {0}, rightPadding: {1}, spacing: {2}", leftPadding, rightPadding, spacing);
@@ -479,14 +494,17 @@ namespace BAStudio.MultiLayoutScroller
                 layoutIndexMax--;
                 if (_debug) Debug.LogFormat(">>> POOL | Active layouts: {0} ~ {1}", layoutIndexMin, layoutIndexMax);
             }
-
+            int loaded = 0;
             // LOAD >>>
             // While there're still more layouts on the left side should be loaded
             while (layoutIndexMin > 0)
             {
                 activeViewInstance.layouts[layoutIndexMin].RectTransform.GetWorldCorners(tempWorldCorners);
                 if (tempWorldCorners[0].x - (spacing * root.localScale.x) < recyclingleViewBounds.min.x)
+                {
+                    shouldLoadMore = false;
                     break;
+                }
                 layoutIndexMin--;
                 LayoutInstance li = PopLayout(activeViewSchema.layouts[layoutIndexMin].typeID);
                 FillItemsIntoLayout(li, layoutIndexMin);
@@ -494,12 +512,58 @@ namespace BAStudio.MultiLayoutScroller
                 leftPadding -= ((li.transform as RectTransform).rect.width + spacing);
                 li.RectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, leftPadding, li.RectTransform.rect.width);
                 li.transform.SetAsFirstSibling();
+                li.CanvasGroup.alpha = 1;
                 if (_debug) Debug.LogFormat("LOAD >>> | Active layouts: {0} ~ {1}", layoutIndexMin, layoutIndexMax);                
+                loaded++;
+                if (loaded >= maxLayoutLoadingPerFrame)
+                {
+                    shouldLoadMore = true;
+                    break;
+                }
             }
 
             pooledLayoutPaddingWSAD.z = leftPadding;
             pooledLayoutPaddingWSAD.w = rightPadding;
-            _recycling = false;
+            _working = false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="loadStreak"></param>
+        /// <param name="leftPadding"></param>
+        /// <param name="spacing"></param>
+        /// <returns>Should continue</returns>
+        void PopRight(ref int loadStreak, ref float leftPadding, ref float rightPadding, float spacing)
+        {
+            activeViewInstance.layouts[layoutIndexMax].RectTransform.GetWorldCorners(tempWorldCorners);
+            if (layoutIndexMax >= activeViewSchema.layouts.Count - 1 ||  tempWorldCorners[2].x + (spacing) * root.localScale.x > recyclingleViewBounds.max.x)
+            {
+                shouldLoadMore = false;
+                return;
+            }
+            layoutIndexMax++;
+            LayoutInstance li = PopLayout(activeViewSchema.layouts[layoutIndexMax].typeID);
+            // if (_debug) Debug.LogFormat("Popping layout {0}/{1}, it's type {2} and has {3} items", newLayoutIndex, activeViewSchema.layouts.Count - 1, activeViewSchema.layouts[newLayoutIndex].typeID ,activeViewSchema.layouts[newLayoutIndex].items.Count);
+            // if (_debug) Debug.LogFormat("Right padding: {0} (-{1})", rightPadding, spacing + (li.transform as RectTransform).rect.width);
+            FillItemsIntoLayout(li, layoutIndexMax);
+            activeViewInstance.AddLayout(layoutIndexMax, li);
+            li.RectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, (activeViewInstance.RectTransform.rect.width - rightPadding + spacing), li.RectTransform.rect.width);
+            li.CanvasGroup.alpha = 1;
+            rightPadding -= (li.transform as RectTransform).rect.width;
+            if (activeViewInstance.layouts.Count > 1) rightPadding -= spacing; // There's no spacing if there's only 1 layout
+            if (_debug) Debug.LogFormat(" <<< LOAD | Active layouts: {0} ~ {1}", layoutIndexMin, layoutIndexMax);
+            loadStreak++;
+            if (loadStreak >= maxLayoutLoadingPerFrame)
+            {
+                shouldLoadMore = true;
+                return;
+            }
+            activeViewInstance.layouts[layoutIndexMax].RectTransform.GetWorldCorners(tempWorldCorners);
+            if (tempWorldCorners[0].x - (spacing * root.localScale.x) < recyclingleViewBounds.min.x)
+            {
+                shouldLoadMore = false;
+            }
         }
 
         void PopLayoutRight (bool hasSpacing)
@@ -521,10 +585,14 @@ namespace BAStudio.MultiLayoutScroller
             rightPadding -= (li.transform as RectTransform).rect.width;
             if (hasSpacing) rightPadding -= spacing;
             FillItemsIntoLayout(li, layoutIndexMax);
+            li.CanvasGroup.alpha = 1;
+            li.OnLoaded();
             for (int i = 0; i < li.items.Length; i++)
             {
                 li.items[i].SetData(DataSource[activeViewSchema.layouts[layoutIndexMax].items[i].dataID]);
+                li.items[i].OnLoaded();
             }
+
             if (_debug) Debug.LogFormat("<<< LOAD | Active layouts: {0} ~ {1}", layoutIndexMin, layoutIndexMax);  
             pooledLayoutPaddingWSAD.w = rightPadding;
         }
@@ -549,23 +617,23 @@ namespace BAStudio.MultiLayoutScroller
         void PoolLayoutInstance (LayoutInstance li, int layoutIndex)
         {
             PoolItemsFromLayout(li, layoutIndex);
-            li.RectTransform.anchoredPosition = new Vector2(_awayPosition.x, li.RectTransform.anchoredPosition.y);
+            li.CanvasGroup.alpha = 0;
             activeViewInstance.layouts.Remove(layoutIndex);
             layoutPool[activeViewSchema.layouts[layoutIndex].typeID].Push(li);
         }
 
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-        void PoolItemsFromLayout (LayoutInstance li, int layoutIndex)
+        protected virtual void PoolItemsFromLayout (LayoutInstance li, int layoutIndex)
         {
             for (var i = 0; i < li.items.Length; i++)
             {
-                li.items[i].RectTransform.anchoredPosition = new Vector2(_awayPosition.x, li.items[i].RectTransform.anchoredPosition.y);
+                li.items[i].CanvasGroup.alpha = 0;
                 itemPool[activeViewSchema.layouts[layoutIndex].items[i].type].Push(li.items[i]);
                 li.items[i] = null;
             }
         }
 
-        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+        // [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         void FillItemsIntoLayout (LayoutInstance li, int layoutIndex)
         {
             MutliLayoutScrollerLayoutSchema targetSchema = activeViewSchema.layouts[layoutIndex];
@@ -576,6 +644,7 @@ namespace BAStudio.MultiLayoutScroller
                 ItemInstance ii = PopItem(targetSchema.items[i].type);
                 li.Assign(i, ii);
                 ii.SetData(DataSource[schemaItems[i].dataID]);
+                ii.CanvasGroup.alpha = 1;
             }
         }
 
@@ -633,44 +702,44 @@ namespace BAStudio.MultiLayoutScroller
 
         void InitDebug ()
         {
-            paddingLeft = new GameObject("_paddingLeft", typeof(RectTransform), typeof(Image)).GetComponent<RectTransform>();
+            if (paddingLeft == null) paddingLeft = new GameObject("_paddingLeft", typeof(RectTransform), typeof(Image)).GetComponent<RectTransform>();
             paddingLeft.SetParent(activeViewInstance.transform, false);
             paddingLeft.pivot = Vector2.zero;
             paddingLeft.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Bottom, 0, 20);
             paddingLeft.GetComponent<Image>().color = Color.red;
             paddingLeft.GetComponent<Image>().maskable = false;
-            pooledLeft = new GameObject("_pooledLeft", typeof(RectTransform), typeof(Image)).GetComponent<RectTransform>();
+            if (pooledLeft == null) pooledLeft = new GameObject("_pooledLeft", typeof(RectTransform), typeof(Image)).GetComponent<RectTransform>();
             pooledLeft.SetParent(activeViewInstance.transform, false);
             pooledLeft.GetComponent<Image>().color = Color.green;
             pooledLeft.GetComponent<Image>().maskable = false;
             pooledLeft.pivot = Vector2.zero;
             pooledLeft.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Bottom, 0, 20);
-            body = new GameObject("_body", typeof(RectTransform), typeof(Image)).GetComponent<RectTransform>();
+            if (body == null) body = new GameObject("_body", typeof(RectTransform), typeof(Image)).GetComponent<RectTransform>();
             body.SetParent(activeViewInstance.transform, false);
             body.GetComponent<Image>().color = Color.cyan;
             body.GetComponent<Image>().maskable = false;
             body.pivot = Vector2.zero;
             body.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Bottom, 0, 20);
-            pooledRight = new GameObject("_pooledRight", typeof(RectTransform), typeof(Image)).GetComponent<RectTransform>();
+            if (pooledRight == null) pooledRight = new GameObject("_pooledRight", typeof(RectTransform), typeof(Image)).GetComponent<RectTransform>();
             pooledRight.SetParent(activeViewInstance.transform, false);
             pooledRight.GetComponent<Image>().color = Color.blue;
             pooledRight.GetComponent<Image>().maskable = false;
             pooledRight.pivot = Vector2.zero;
             pooledRight.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Bottom, 0, 20);
-            paddingRight = new GameObject("_paddingRight", typeof(RectTransform), typeof(Image)).GetComponent<RectTransform>();
+            if (paddingRight == null) paddingRight = new GameObject("_paddingRight", typeof(RectTransform), typeof(Image)).GetComponent<RectTransform>();
             paddingRight.SetParent(activeViewInstance.transform, false);
             paddingRight.GetComponent<Image>().color = Color.yellow;
             paddingRight.GetComponent<Image>().maskable = false;
             paddingRight.pivot = Vector2.zero;
             paddingRight.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Bottom, 0, 20);
-            layoutMin = new GameObject("_layoutMin", typeof(RectTransform), typeof(Image)).GetComponent<RectTransform>();
+            if (layoutMin == null) layoutMin = new GameObject("_layoutMin", typeof(RectTransform), typeof(Image)).GetComponent<RectTransform>();
             layoutMin.SetParent(activeViewInstance.transform, false);
             layoutMin.GetComponent<Image>().color = Color.magenta;
             layoutMin.GetComponent<Image>().maskable = false;
             layoutMin.anchorMin = Vector2.up/2f;
             layoutMin.anchorMax = Vector2.up/2f;
             layoutMin.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Bottom, -20, 20);
-            layoutMax = new GameObject("_layoutMax", typeof(RectTransform), typeof(Image)).GetComponent<RectTransform>();
+            if (layoutMax == null) layoutMax = new GameObject("_layoutMax", typeof(RectTransform), typeof(Image)).GetComponent<RectTransform>();
             layoutMax.SetParent(activeViewInstance.transform, false);
             layoutMax.GetComponent<Image>().color = Color.magenta;
             layoutMax.GetComponent<Image>().maskable = false;
@@ -693,7 +762,26 @@ namespace BAStudio.MultiLayoutScroller
             layoutMax.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, r.rect.width);
             layoutMax.anchoredPosition = r.anchoredPosition;
         }
-        #endif
+
+
+        public void SignalTransitionFinished(ViewInstance transitionObj)
+        {
+            Assert.AreEqual(transitionObj, activeViewInstance);
+            viewSwitchProgress++;
+            if (viewSwitchProgress == 3) SwitchToLoadedViewStage2();
+
+        }
+
+        public void SignalTransitionFinished(LayoutInstance transitionObj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SignalTransitionFinished(ItemInstance transitionObj)
+        {
+            throw new NotImplementedException();
+        }
+#endif
     }
 
     public struct LayoutTypeMeta

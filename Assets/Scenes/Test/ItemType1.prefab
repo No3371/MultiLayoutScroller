@@ -85,6 +85,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4552985630981855387}
   - component: {fileID: 5214477536047658670}
+  - component: {fileID: 3901554574765695341}
   m_Layer: 5
   m_Name: ItemType1
   m_TagString: Untagged
@@ -133,6 +134,18 @@ MonoBehaviour:
   gold: {fileID: 8245823879677227500}
   favored: {fileID: 3754191267801173512}
   text: {fileID: 0}
+--- !u!225 &3901554574765695341
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3016423613927141155}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &5184606842172424923
 GameObject:
   m_ObjectHideFlags: 0

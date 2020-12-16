@@ -10,6 +10,9 @@ namespace BAStudio.MultiLayoutScroller
         public RectTransform RectTransform=> (this.transform as RectTransform);
         [SerializeField] internal RectTransformData[] slotsBaked;
         internal ItemInstance[] items;
+        protected CanvasGroup canvasGroup;
+        internal CanvasGroup CanvasGroup { get => canvasGroup?? (canvasGroup = this.GetComponent<CanvasGroup>()); }
+
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         internal void Assign(int slotIndex, ItemInstance item)
         {
@@ -18,6 +21,17 @@ namespace BAStudio.MultiLayoutScroller
             items[slotIndex] = item;
         }
         public bool CullByItem; // Should the scroller scan through and try to load/unload items 
+
+        /// <summary>
+        /// Notify that the scroller has loaded this layout.
+        /// At the moment, the canvas group alpha is set to 1.
+        /// </summary>
+        internal virtual void OnLoaded () { }
+        /// <summary>
+        /// Notify that the scroller has pooled this layout.
+        /// At the moment, the canvas group alpha is set to 0.
+        /// </summary>
+        internal virtual void OnPooled () { }
     }
 
     [System.Serializable]

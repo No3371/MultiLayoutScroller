@@ -35,8 +35,9 @@ namespace BAStudio.MultiLayoutScroller
                 ds.Set(i, infos[i]);
             }
             targetScroller.DataSource = ds;
-            targetScroller.Load(madeSchema.schema);
             targetScroller.enabled = true;
+            targetScroller.Load(madeSchema.schema);
+            targetScroller.SwitchToLoadedViewStage1(0);
         }
     }
     // 
