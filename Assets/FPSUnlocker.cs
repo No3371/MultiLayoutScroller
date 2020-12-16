@@ -6,7 +6,7 @@ public class FPSUnlocker : MonoBehaviour
 {
     void Awake()
     {
-        Application.targetFrameRate = 300;
+        Application.targetFrameRate = 1000;
         QualitySettings.vSyncCount = 0;
     }
 }

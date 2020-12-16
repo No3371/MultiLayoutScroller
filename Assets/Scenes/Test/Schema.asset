@@ -27,175 +27,173 @@ MonoBehaviour:
       - typeID: 0
         items:
         - type: 1
-          id: 0
+          dataID: 0
       - typeID: 1
         items: []
       - typeID: 1
         items:
         - type: 0
-          id: 0
+          dataID: 0
         - type: 0
-          id: 0
+          dataID: 0
       - typeID: 1
         items:
         - type: 0
-          id: 1
+          dataID: 0
         - type: 1
-          id: 3
+          dataID: 0
       - typeID: 1
         items:
         - type: 0
-          id: 1
+          dataID: 0
         - type: 1
-          id: 3
+          dataID: 0
       - typeID: 1
         items:
         - type: 0
-          id: 1
+          dataID: 4
         - type: 1
-          id: 3
+          dataID: 3
       - typeID: 1
         items:
         - type: 0
-          id: 1
+          dataID: 0
         - type: 1
-          id: 3
+          dataID: 0
       - typeID: 1
         items:
         - type: 0
-          id: 1
+          dataID: 0
         - type: 1
-          id: 3
+          dataID: 0
       - typeID: 1
         items:
         - type: 0
-          id: 1
+          dataID: 0
         - type: 1
-          id: 3
+          dataID: 0
       - typeID: 1
         items:
         - type: 0
-          id: 1
+          dataID: 0
         - type: 1
-          id: 3
+          dataID: 0
       - typeID: 1
         items:
         - type: 0
-          id: 1
+          dataID: 0
         - type: 1
-          id: 3
+          dataID: 0
       - typeID: 1
         items:
         - type: 0
-          id: 1
+          dataID: 0
         - type: 1
-          id: 3
+          dataID: 0
       - typeID: 1
         items:
         - type: 0
-          id: 1
+          dataID: 0
         - type: 1
-          id: 2
+          dataID: 0
       - typeID: 1
         items:
         - type: 0
-          id: 1
+          dataID: 0
         - type: 1
-          id: 3
-      - typeID: 1
-        items:
-        - type: 0
-          id: 1
-        - type: 1
-          id: 3
-      - typeID: 1
-        items:
-        - type: 0
-          id: 1
-        - type: 1
-          id: 3
-      - typeID: 1
-        items:
-        - type: 1
-          id: 4
-        - type: 1
-          id: 3
-      - typeID: 1
-        items:
-        - type: 0
-          id: 1
-        - type: 1
-          id: 3
-      - typeID: 1
-        items:
-        - type: 0
-          id: 1
-        - type: 1
-          id: 3
-      - typeID: 1
-        items:
-        - type: 0
-          id: 4
-        - type: 1
-          id: 4
-      - typeID: 1
-        items:
-        - type: 0
-          id: 1
-        - type: 1
-          id: 3
-      - typeID: 1
-        items:
-        - type: 0
-          id: 1
-        - type: 1
-          id: 3
-      - typeID: 1
-        items:
-        - type: 0
-          id: 1
-        - type: 1
-          id: 3
-      - typeID: 1
-        items:
-        - type: 0
-          id: 1
-        - type: 1
-          id: 3
-      - typeID: 1
-        items:
-        - type: 0
-          id: 1
-        - type: 1
-          id: 3
+          dataID: 0
       - typeID: 0
         items:
         - type: 0
-          id: 1
-      - typeID: 1
-        items:
-        - type: 1
-          id: 0
-        - type: 1
-          id: 2
+          dataID: 4
       - typeID: 1
         items:
         - type: 0
-          id: 1
+          dataID: 0
         - type: 1
-          id: 3
+          dataID: 0
+      - typeID: 1
+        items:
+        - type: 1
+          dataID: 0
+        - type: 1
+          dataID: 0
       - typeID: 1
         items:
         - type: 0
-          id: 1
+          dataID: 0
         - type: 1
-          id: 3
+          dataID: 0
       - typeID: 1
         items:
         - type: 0
-          id: 1
+          dataID: 0
         - type: 1
-          id: 3
+          dataID: 0
+      - typeID: 1
+        items:
+        - type: 0
+          dataID: 0
+        - type: 1
+          dataID: 0
+      - typeID: 1
+        items:
+        - type: 0
+          dataID: 0
+        - type: 1
+          dataID: 0
+      - typeID: 1
+        items:
+        - type: 0
+          dataID: 0
+        - type: 1
+          dataID: 0
+      - typeID: 1
+        items:
+        - type: 0
+          dataID: 0
+        - type: 1
+          dataID: 0
+      - typeID: 1
+        items:
+        - type: 0
+          dataID: 0
+        - type: 1
+          dataID: 0
+      - typeID: 1
+        items:
+        - type: 0
+          dataID: 0
+        - type: 1
+          dataID: 0
+      - typeID: 0
+        items:
+        - type: 0
+          dataID: 0
+      - typeID: 1
+        items:
+        - type: 1
+          dataID: 0
+        - type: 1
+          dataID: 0
+      - typeID: 1
+        items:
+        - type: 0
+          dataID: 0
+        - type: 1
+          dataID: 0
+      - typeID: 1
+        items:
+        - type: 0
+          dataID: 0
+        - type: 1
+          dataID: 0
+      - typeID: 1
+        items:
+        - type: 0
+          dataID: 0
+        - type: 1
+          dataID: 0
     - viewID: 1
       viewLayoutType: 0
       autoLayoutSpacing: 0
