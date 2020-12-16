@@ -33,16 +33,13 @@ namespace BAStudio.MultiLayoutScroller
             if (existingValue == null || !(existingValue is MultiLayoutScrollerSchema)) existingValue = scroller = new MultiLayoutScrollerSchema();
             else scroller = existingValue as MultiLayoutScrollerSchema;
             // Some boxing happening here but should be ok for it's executed bery infrequente.
-            if (!reader.Read() || reader.TokenType != JsonToken.StartArray) throw new JsonSerializationException("Unexpected json, expecting: start of view list");
-            while (reader.Read() && reader.TokenType == JsonToken.StartObject)
+            if (!ReadAndAssureTokenType(reader, JsonToken.StartArray)) ThrowUnexpectedJson("(START) View json array");
+            while (ReadAndAssureTokenType(reader, JsonToken.StartObject))
             {
                 if (scroller.views == null) scroller.views = new List<MutliScrollerViewSchema>();
-                while (reader.Read() && reader.TokenType == JsonToken.StartObject)
-                {
-                    scroller.views.Add(ReadView(reader));
-                }
+                scroller.views.Add(ReadView(reader));
             }
-            if (!reader.Read() || reader.TokenType != JsonToken.EndArray) throw new JsonSerializationException("Unexpected json, expecting: end of view list");
+            if (!ReadAndAssureTokenType(reader, JsonToken.EndArray)) ThrowUnexpectedJson("(END) View json array");
             return scroller;
         }
 
@@ -51,15 +48,15 @@ namespace BAStudio.MultiLayoutScroller
             MutliScrollerViewSchema view = new MutliScrollerViewSchema();
             // Some boxing happening here but should be ok for it's executed bery infrequente.
             AssurePropName(reader, KEY_VIEW_ID);
-            if (!reader.Read() || reader.TokenType != JsonToken.Integer) ThrowUnexpectedJson("(int) view ID");
+            if (!ReadAndAssureTokenType(reader, JsonToken.Integer)) ThrowUnexpectedJson("(Int) View ID");
             view.viewID = ViewNameToID((string) reader.Value);
             AssurePropName(reader, KEY_VIEW_LAYOUTS);
-            if (!reader.Read() || reader.TokenType != JsonToken.StartArray) throw new JsonSerializationException("Unexpected json, expecting: list of layouts (integer seperated by ,)");
-            while (reader.Read() && reader.TokenType == JsonToken.StartObject)
+            if (!ReadAndAssureTokenType(reader, JsonToken.StartArray)) ThrowUnexpectedJson("(START) Layout array)");
+            while (ReadAndAssureTokenType(reader, JsonToken.StartObject))
             {
                 view.layouts.Add(ReadLayout(reader));
             }
-            reader.Read(); // End of object
+            ReadAndAssureTokenType(reader, JsonToken.EndArray);
             return view;
         }
 
@@ -68,17 +65,16 @@ namespace BAStudio.MultiLayoutScroller
             MutliLayoutScrollerLayoutSchema layout = new MutliLayoutScrollerLayoutSchema();
             // Some boxing happening here but should be ok for it's executed bery infrequente.
             AssurePropName(reader, KEY_LAYOUT_TYPE);
-            if (AssureValue(reader, JsonToken.Integer)) ThrowUnexpectedJson("(type) layout type ID");
+            if (ReadAndAssureTokenType(reader, JsonToken.Integer)) ThrowUnexpectedJson("(type) layout type ID");
             layout.typeID = LayoutTypeNameToID((string) reader.Value);
             AssurePropName(reader, KEY_LAYOUT_ITEMS);
-            while (reader.Read() && reader.TokenType == JsonToken.StartArray)
-            {
-                reader.Read();
-                if (reader.TokenType == JsonToken.EndArray) break;
-                else if (reader.TokenType == JsonToken.StartObject) layout.items.Add(ReadItemTypeIDPair(reader));
-                else throw new JsonSerializationException("Unexpected json, expecting: item json object");
-            }
-            if (!reader.Read() || reader.TokenType != JsonToken.EndObject) throw new JsonSerializationException("Unexpected json, expecting: end of layout object");
+            if (!ReadAndAssureTokenType(reader, JsonToken.StartArray)) ThrowUnexpectedJson("(START) Item array");
+                while (ReadAndAssureTokenType(reader, JsonToken.StartObject))
+                {
+                    layout.items.Add(ReadItemTypeIDPair(reader));
+                }
+            if (!ReadAndAssureTokenType(reader, JsonToken.EndArray)) ThrowUnexpectedJson("(END) Item array");
+            if (!ReadAndAssureTokenType(reader, JsonToken.EndObject)) ThrowUnexpectedJson("(END) Layout Object");
             return layout;
         }
 
@@ -86,13 +82,13 @@ namespace BAStudio.MultiLayoutScroller
         {
             if (!reader.Read()) throw new JsonSerializationException("Unexpected end of json object when reading items");
             TypeIDPair pair;
-            if (!reader.Read() || reader.TokenType != JsonToken.PropertyName || (string) reader.Value != KEY_ITEM_TYPE) 
-            if (!reader.Read() || reader.TokenType != JsonToken.Integer) throw new JsonSerializationException("Unexpected json, expecting: item type");
+            AssurePropName(reader, KEY_ITEM_TYPE);
+            if (!ReadAndAssureTokenType(reader, JsonToken.Integer)) ThrowUnexpectedJson("(Int) Item type");
             pair.type = (int) reader.Value;
-            if (!reader.Read() || reader.TokenType != JsonToken.PropertyName || (string) reader.Value != KEY_ITEM_TYPE) throw new JsonSerializationException("Unexpected json, expecting: property name (ID)");
-            if (!reader.Read() || reader.TokenType != JsonToken.Integer) throw new JsonSerializationException("Unexpected json, expecting: item id");
-            pair.id = (int) reader.Value;
-            if (!reader.Read() || reader.TokenType != JsonToken.EndObject) throw new JsonSerializationException("Unexpected json, expecting: end of item json object");
+            AssurePropName(reader, KEY_ITEM_ID);
+            if (!ReadAndAssureTokenType(reader, JsonToken.Integer)) ThrowUnexpectedJson("(Int) Item data ID");
+            pair.dataID = (int) reader.Value;
+            if (!ReadAndAssureTokenType(reader, JsonToken.EndObject)) ThrowUnexpectedJson("(END) Item object");
             return pair;            
         }
 
@@ -112,7 +108,7 @@ namespace BAStudio.MultiLayoutScroller
         }
 
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-        public bool AssureValue (JsonReader reader, JsonToken type)
+        public bool ReadAndAssureTokenType (JsonReader reader, JsonToken type)
         {
             return reader.Read() && reader.TokenType != type;
         }

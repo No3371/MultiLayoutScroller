@@ -523,7 +523,7 @@ namespace BAStudio.MultiLayoutScroller
             FillItemsIntoLayout(li, layoutIndexMax);
             for (int i = 0; i < li.items.Length; i++)
             {
-                li.items[i].SetData(DataSource[activeViewSchema.layouts[layoutIndexMax].items[i].id]);
+                li.items[i].SetData(DataSource[activeViewSchema.layouts[layoutIndexMax].items[i].dataID]);
             }
             if (_debug) Debug.LogFormat("<<< LOAD | Active layouts: {0} ~ {1}", layoutIndexMin, layoutIndexMax);  
             pooledLayoutPaddingWSAD.w = rightPadding;
@@ -575,7 +575,7 @@ namespace BAStudio.MultiLayoutScroller
             {
                 ItemInstance ii = PopItem(targetSchema.items[i].type);
                 li.Assign(i, ii);
-                ii.SetData(DataSource[schemaItems[i].id]);
+                ii.SetData(DataSource[schemaItems[i].dataID]);
             }
         }
 

@@ -15,7 +15,7 @@ namespace BAStudio.MultiLayoutScroller
     [System.Serializable]
     public struct TypeIDPair
     {
-        public int type, id;
+        public int type, dataID;
     }
 
 
