@@ -48,6 +48,7 @@ GameObject:
   - component: {fileID: 7586751352393425293}
   - component: {fileID: 1581380836343207574}
   - component: {fileID: 1836468534829401467}
+  - component: {fileID: 4619618650340438642}
   m_Layer: 5
   m_Name: Layout(2_V)
   m_TagString: Untagged
@@ -113,6 +114,7 @@ MonoBehaviour:
   autoBakeOnLoad: 0
   destoryBakedPlaceHolders: 0
   destroyOnUsed: 0
+  removeOnBuild: 0
   slots:
   - {fileID: 5790512522555682697}
   - {fileID: 610218339239941496}
@@ -140,7 +142,7 @@ MonoBehaviour:
   m_Color: {r: 0.44139376, g: 0.8584906, b: 0.8451449, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 0
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -154,6 +156,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!225 &4619618650340438642
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7545558833888930874}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &9142666826517481363
 GameObject:
   m_ObjectHideFlags: 0

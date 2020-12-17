@@ -1,0 +1,17 @@
+{
+    "name": "BAStudio.MultiLayoutScroller.JsonConvertor",
+    "references": [
+        "GUID:d63d8310ea2d29949b0778881a521f10"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Newtonsoft.Json.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
