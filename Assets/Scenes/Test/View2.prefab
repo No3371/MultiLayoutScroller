@@ -106,6 +106,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6881938441780681445}
   - component: {fileID: 6523884963387772542}
+  - component: {fileID: 8525262260470954744}
   m_Layer: 5
   m_Name: View2
   m_TagString: Untagged
@@ -146,6 +147,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c628d10558499d646a7198d2cbf67aa1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!225 &8525262260470954744
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6558681692405132945}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &6904581946422363118
 GameObject:
   m_ObjectHideFlags: 0
@@ -211,7 +224,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 1
+  m_text: V2
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

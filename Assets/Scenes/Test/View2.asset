@@ -22,7 +22,9 @@ MonoBehaviour:
       m_Top: 0
       m_Bottom: 0
     useUnityPrefabLayout: 0
-    layouts: []
+    layouts:
+    - typeID: 0
+      items: []
   layoutAssets:
   - {fileID: 11400000, guid: 4d5901d20f2ca08418daaccf1298db1d, type: 2}
   - {fileID: 0}

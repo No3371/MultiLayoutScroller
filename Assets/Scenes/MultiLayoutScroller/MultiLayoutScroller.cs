@@ -22,7 +22,7 @@ namespace BAStudio.MultiLayoutScroller
         protected RectTransform PrototypeCell;
         protected int maxLayoutInstances, maxItemInstances;
         protected MultiLayoutScrollerSchema activeSchema;
-        protected int activeViewIndex, layoutIndexMin = -1, layoutIndexMax = -1;
+        protected int activeViewIndex, switchiingTargetViewIndex, layoutIndexMin = -1, layoutIndexMax = -1;
         protected MutliScrollerViewSchema activeViewSchema => activeSchema.views[activeViewIndex];
         protected ViewInstance activeViewInstance;
         protected Vector2 _prevAnchoredPos;
@@ -86,17 +86,19 @@ namespace BAStudio.MultiLayoutScroller
         
         public void SwitchToLoadedViewStage1 (int index)
         {
+            shouldLoadMore = false;
             onValueChanged?.RemoveListener(OnValueChangedHandler);
             if (viewObjects.Count == 0)
                 throw new ArgumentNullException("You have to define at least 1 view first!");
 
             ViewInstance nextView = viewObjects[index];
-            activeViewIndex = index;
+            switchiingTargetViewIndex = index;
             if (activeViewInstance != null)
             {
                 viewSwitchProgress = 1;
                 activeViewInstance.OnSwitchingAway(this);
                 nextView.OnSwitchingTo(this);
+                nextView.CanvasGroup.alpha = 1;
             }
             else
             {
@@ -112,6 +114,7 @@ namespace BAStudio.MultiLayoutScroller
                 PoolActiveView();
                 activeViewInstance.OnSwitchedAway();
             }
+            activeViewIndex = switchiingTargetViewIndex;
             ViewInstance view = viewObjects[activeViewIndex];
             activeViewInstance = view;
             SetRecyclingBounds();
@@ -162,12 +165,14 @@ namespace BAStudio.MultiLayoutScroller
 
         public void PoolActiveView ()
         {
-            while (layoutIndexMax >= layoutIndexMin )
+            while (layoutIndexMax >= layoutIndexMin)
             {
+                Debug.LogFormat("{0}/{1}", layoutIndexMin, layoutIndexMax);
                 PoolLayoutInstance(activeViewInstance.layouts[layoutIndexMax], layoutIndexMax);
                 layoutIndexMax--;
             }
             layoutIndexMin = layoutIndexMax = -1;
+            activeViewInstance.CanvasGroup.alpha = 0;
         }
 
         public void DefineViewType (int typeID, ViewInstance prefab) 
@@ -240,7 +245,7 @@ namespace BAStudio.MultiLayoutScroller
 
         protected virtual Vector2 CalculateViewSize ()
         {
-            Vector2 viewSize = activeViewInstance.RectTransform.rect.size;
+            Vector2 viewSize = Vector2.zero;
             if (_debug) Debug.LogFormat("Padding: {0}, Spacing: {1}", activeViewSchema.autoLayoutPadding, activeViewSchema.autoLayoutSpacing);
             switch (activeViewSchema.viewLayoutType)
             {
@@ -647,6 +652,7 @@ namespace BAStudio.MultiLayoutScroller
                     if (li.items[i] != null)
                         itemPool[li.items[i].dataID.type].Push(li.items[i]);
 
+                    if (i >= targetSchema.items.Count) Debug.LogErrorFormat("Assigning item {0} to view {1} layout {2} which is of type {3}, please check the schema.", i, activeViewIndex, layoutIndex, targetSchema.typeID);
                     ii = PopItem(schemaItems[i].type);
                     ii.dataID = schemaItems[i];
                     li.Assign(i, ii);
@@ -776,10 +782,10 @@ namespace BAStudio.MultiLayoutScroller
             layoutMax.anchoredPosition = r.anchoredPosition;
         }
 
+#endif
 
         public void SignalTransitionFinished(ViewInstance transitionObj)
         {
-            Assert.AreEqual(transitionObj, activeViewInstance);
             viewSwitchProgress++;
             if (viewSwitchProgress == 3) SwitchToLoadedViewStage2();
 
@@ -794,7 +800,6 @@ namespace BAStudio.MultiLayoutScroller
         {
             throw new NotImplementedException();
         }
-#endif
     }
 
     public struct LayoutTypeMeta

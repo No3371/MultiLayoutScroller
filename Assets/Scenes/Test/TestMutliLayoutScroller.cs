@@ -39,6 +39,11 @@ namespace BAStudio.MultiLayoutScroller
             targetScroller.Load(madeSchema.schema);
             targetScroller.SwitchToLoadedViewStage1(0);
         }
+
+        public void SwitchToView (int viewIndex)
+        {
+            targetScroller.SwitchToLoadedViewStage1(viewIndex);
+        }
     }
     // 
 

@@ -196,7 +196,7 @@ MonoBehaviour:
           dataID: 0
     - viewID: 1
       viewLayoutType: 0
-      autoLayoutSpacing: 0
+      autoLayoutSpacing: 100
       autoLayoutPadding:
         m_Left: 0
         m_Right: 0
@@ -206,6 +206,12 @@ MonoBehaviour:
       layouts:
       - typeID: 1
         items: []
+      - typeID: 1
+        items: []
+      - typeID: 0
+        items:
+        - type: 0
+          dataID: 0
   viewAssets:
   - {fileID: 11400000, guid: 316d81d6ff813214886109cedca051fe, type: 2}
   Comment: 
