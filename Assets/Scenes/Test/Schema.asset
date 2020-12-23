@@ -22,178 +22,15 @@ MonoBehaviour:
         m_Right: 20
         m_Top: 0
         m_Bottom: 0
-      useUnityPrefabLayout: 0
       layouts:
       - typeID: 0
         items:
         - type: 1
-          dataID: 0
-      - typeID: 1
-        items: []
-      - typeID: 1
-        items:
-        - type: 0
-          dataID: 0
-        - type: 0
-          dataID: 0
-      - typeID: 1
-        items:
-        - type: 0
-          dataID: 0
-        - type: 1
-          dataID: 0
-      - typeID: 1
-        items:
-        - type: 0
-          dataID: 0
-        - type: 1
-          dataID: 0
-      - typeID: 1
-        items:
-        - type: 0
-          dataID: 4
-        - type: 1
-          dataID: 3
-      - typeID: 1
-        items:
-        - type: 0
-          dataID: 0
-        - type: 1
-          dataID: 0
-      - typeID: 1
-        items:
-        - type: 0
-          dataID: 0
-        - type: 1
-          dataID: 0
-      - typeID: 1
-        items:
-        - type: 0
-          dataID: 0
-        - type: 1
-          dataID: 0
-      - typeID: 1
-        items:
-        - type: 0
-          dataID: 0
-        - type: 1
-          dataID: 0
-      - typeID: 1
-        items:
-        - type: 0
-          dataID: 0
-        - type: 1
-          dataID: 0
-      - typeID: 1
-        items:
-        - type: 0
-          dataID: 0
-        - type: 1
-          dataID: 0
-      - typeID: 1
-        items:
-        - type: 0
-          dataID: 0
-        - type: 1
-          dataID: 0
-      - typeID: 1
-        items:
-        - type: 0
-          dataID: 0
-        - type: 1
-          dataID: 0
+          id: 0
       - typeID: 0
         items:
-        - type: 0
-          dataID: 4
-      - typeID: 1
-        items:
-        - type: 0
-          dataID: 0
         - type: 1
-          dataID: 0
-      - typeID: 1
-        items:
-        - type: 1
-          dataID: 0
-        - type: 1
-          dataID: 0
-      - typeID: 1
-        items:
-        - type: 0
-          dataID: 0
-        - type: 1
-          dataID: 0
-      - typeID: 1
-        items:
-        - type: 0
-          dataID: 0
-        - type: 1
-          dataID: 0
-      - typeID: 1
-        items:
-        - type: 0
-          dataID: 0
-        - type: 1
-          dataID: 0
-      - typeID: 1
-        items:
-        - type: 0
-          dataID: 0
-        - type: 1
-          dataID: 0
-      - typeID: 1
-        items:
-        - type: 0
-          dataID: 0
-        - type: 1
-          dataID: 0
-      - typeID: 1
-        items:
-        - type: 0
-          dataID: 0
-        - type: 1
-          dataID: 0
-      - typeID: 1
-        items:
-        - type: 0
-          dataID: 0
-        - type: 1
-          dataID: 0
-      - typeID: 1
-        items:
-        - type: 0
-          dataID: 0
-        - type: 1
-          dataID: 0
-      - typeID: 0
-        items:
-        - type: 0
-          dataID: 0
-      - typeID: 1
-        items:
-        - type: 1
-          dataID: 0
-        - type: 1
-          dataID: 0
-      - typeID: 1
-        items:
-        - type: 0
-          dataID: 0
-        - type: 1
-          dataID: 0
-      - typeID: 1
-        items:
-        - type: 0
-          dataID: 0
-        - type: 1
-          dataID: 0
-      - typeID: 1
-        items:
-        - type: 0
-          dataID: 0
-        - type: 1
-          dataID: 0
+          id: 0
     - viewID: 1
       viewLayoutType: 0
       autoLayoutSpacing: 100
@@ -202,7 +39,6 @@ MonoBehaviour:
         m_Right: 0
         m_Top: 0
         m_Bottom: 0
-      useUnityPrefabLayout: 0
       layouts:
       - typeID: 1
         items: []
@@ -211,7 +47,7 @@ MonoBehaviour:
       - typeID: 0
         items:
         - type: 0
-          dataID: 0
+          id: 0
   viewAssets:
   - {fileID: 11400000, guid: 316d81d6ff813214886109cedca051fe, type: 2}
   Comment: 

@@ -8,21 +8,22 @@ using UnityEngine;
 
 namespace BAStudio.MultiLayoutScroller
 {
-    [CustomPropertyDrawer(typeof(MutliLayoutScrollerLayoutSchema), true)]
-    public class LayoutSchemaDrawer : PropertyDrawer
+    [CustomPropertyDrawer(typeof(ItemTypeIDPair), true)]
+    public class ItemSchemaDrawer : PropertyDrawer
     {
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             return property.isExpanded? EditorGUI.GetPropertyHeight(property, true) : base.GetPropertyHeight(property, label);
         }
-        
-        public override void OnGUI (Rect position, SerializedProperty property, GUIContent label) {
+
+        public override void OnGUI (Rect position, SerializedProperty property, GUIContent label)
+        {
             EditorGUI.BeginProperty (position, label, property);
-            int type = property.FindPropertyRelative("typeID").intValue;
-            int itemCount = property.FindPropertyRelative("items").arraySize;
+            int type = property.FindPropertyRelative("type").intValue;
+            int id = property.FindPropertyRelative("id").intValue;
             Rect r = position;
             r.height = EditorGUIUtility.singleLineHeight;
-            property.isExpanded = EditorGUI.Foldout(r, property.isExpanded, string.Format("Type{0} ({1} items)", type, itemCount));
+            property.isExpanded = EditorGUI.Foldout(r, property.isExpanded, string.Format("Type{0}->#{1}", type, id));
             if (property.isExpanded)
             {
                 r = EditorGUI.IndentedRect(position);
@@ -41,13 +42,13 @@ namespace BAStudio.MultiLayoutScroller
                     r.y += EditorGUIUtility.singleLineHeight;
                     Rect tmpRect = r;
                     tmpRect.width = 64 + EditorGUIUtility.labelWidth;
-                    EditorGUI.PropertyField(tmpRect, property.FindPropertyRelative("typeID"));
+                    EditorGUI.PropertyField(tmpRect, property.FindPropertyRelative("type"));
                     tmpRect.width = r.width - 64 - 4 - EditorGUIUtility.labelWidth;
                     tmpRect.x = r.x + 64 + 4 + EditorGUIUtility.labelWidth;
-                    if (TypeIndex.LayoutTypes.ContainsKey(type)) EditorGUI.HelpBox(tmpRect, TypeIndex.LayoutTypes[type], MessageType.Info);
+                    if (TypeIndex.ItemPrefabTypes.ContainsKey(type)) EditorGUI.HelpBox(tmpRect, TypeIndex.ItemPrefabTypes[type], MessageType.Info);
                     else EditorGUI.HelpBox(tmpRect, "Unnamed type", MessageType.Info);
-                    r.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
-                    EditorGUI.PropertyField(r, property.FindPropertyRelative("items"), true);
+                    r.y += EditorGUIUtility.singleLineHeight + 2;
+                    EditorGUI.PropertyField(r, property.FindPropertyRelative("id"));
                 }
                 EditorGUI.indentLevel = indentCache;
             }

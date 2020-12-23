@@ -95,7 +95,6 @@ public class ExtendedScriptableObjectDrawer : PropertyDrawer {
 			if(property.isExpanded) {
 				// Draw a background that shows us clearly which fields are part of the ScriptableObject
 				Rect expanded = new Rect(0, position.y + EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing, Screen.width, position.height - EditorGUIUtility.singleLineHeight - EditorGUIUtility.standardVerticalSpacing);
-				// GUI.Box(expanded, "");
 
 				EditorGUI.indentLevel++;
 				SerializedObject serializedObject = new SerializedObject(data);
@@ -112,17 +111,17 @@ public class ExtendedScriptableObjectDrawer : PropertyDrawer {
 				);
 
 				// Iterate over all the values and draw them
-				SerializedProperty prop = serializedObject.GetIterator();
+				SerializedProperty propIterator = serializedObject.GetIterator();
 				float y = position.y + EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
-				if (prop.NextVisible(true)) {
+				if (propIterator.NextVisible(true)) {
 					do {
 						// Don't bother drawing the class file
-						if(prop.name == "m_Script") continue;
-						float height = EditorGUI.GetPropertyHeight(prop, new GUIContent(prop.displayName), true);
-						EditorGUI.PropertyField(new Rect(position.x, y, position.width, height), prop, true);
+						if(propIterator.name == "m_Script") continue;
+						float height = EditorGUI.GetPropertyHeight(propIterator, new GUIContent(propIterator.displayName), true);
+						EditorGUI.PropertyField(new Rect(position.x, y, position.width, height), propIterator, true);
 						y += height + EditorGUIUtility.standardVerticalSpacing;
 					}
-					while (prop.NextVisible(false));
+					while (propIterator.NextVisible(false));
 				}
 				if (GUI.changed)
 					serializedObject.ApplyModifiedProperties();

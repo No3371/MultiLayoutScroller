@@ -237,7 +237,7 @@ namespace BAStudio.MultiLayoutScroller
             for (int i = 0; i < initPoolSize - 1; i++)
             {
                 ItemInstance ii = GameObject.Instantiate(runtimePrefab);
-                ii.dataID = new ItemTypeIDPair { type = typeID, id = -1 };
+                ii.schemaCache = new ItemTypeIDPair { type = typeID, id = -1 };
                 ii.RectTransform.SetParent(hidden.transform, false);
                 stack.Push(ii);
             }
@@ -662,14 +662,14 @@ namespace BAStudio.MultiLayoutScroller
             {
                 ItemInstance ii;
 
-                if (li.items[i] == null || li.items[i].dataID.type == schemaItems[i].type)
+                if (li.items[i] == null || li.items[i].schemaCache.type == schemaItems[i].type)
                 {
                     if (li.items[i] != null)
-                        itemPool[li.items[i].dataID.type].Push(li.items[i]);
+                        itemPool[li.items[i].schemaCache.type].Push(li.items[i]);
 
                     if (i >= targetSchema.items.Count) Debug.LogErrorFormat("Assigning item {0} to view {1} layout {2} which is of type {3}, please check the schema.", i, activeViewIndex, layoutIndex, targetSchema.typeID);
                     ii = PopItem(schemaItems[i].type);
-                    ii.dataID = schemaItems[i];
+                    ii.schemaCache = schemaItems[i];
                     li.Assign(i, ii);
                 }
                 else
