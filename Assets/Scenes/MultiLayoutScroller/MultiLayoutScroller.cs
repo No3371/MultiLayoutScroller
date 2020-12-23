@@ -174,6 +174,7 @@ namespace BAStudio.MultiLayoutScroller
             layoutIndexMin = layoutIndexMax = -1;
             activeViewInstance.CanvasGroup.alpha = 0;
         }
+
         public void Bind (GameObjectBindings bindings)
         {
             for (var i = 0; i < bindings.views.Length; i++)
@@ -184,7 +185,7 @@ namespace BAStudio.MultiLayoutScroller
             {
                 AssignLayoutPrefab(bindings.layouts[i].id, bindings.layouts[i].gameObject.GetComponent<LayoutInstance>(), bindings.layouts[i].meta);
             }
-            for (var i = 0; i < bindings.views.Length; i++)
+            for (var i = 0; i < bindings.items.Length; i++)
             {
                 AssginItemPrefab(bindings.items[i].prefabIndex, bindings.items[i].prefab.GetComponent<ItemInstance>(), bindings.items[i].initPoolSize);
             }
