@@ -43,13 +43,14 @@ namespace BAStudio.MultiLayoutScroller
     [System.Serializable]
     struct RectTransformData
     {
-        public Vector2 anchorMin, anchorMax, anchoredPosition, sizeDelta;
+        public Vector2 anchorMin, anchorMax, anchoredPosition, sizeDelta, localScale;
         public RectTransformData (RectTransform source)
         {
             this.anchorMin = source.anchorMin;
             this.anchorMax = source.anchorMax;
             this.anchoredPosition = source.anchoredPosition;
             this.sizeDelta = source.sizeDelta;
+            this.localScale = source.localScale;
         }
         
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
@@ -59,6 +60,7 @@ namespace BAStudio.MultiLayoutScroller
             dest.anchorMax = this.anchorMax;
             dest.anchoredPosition = this.anchoredPosition;
             dest.sizeDelta = this.sizeDelta;
+            dest.localScale = this.localScale;
         }
 
     }

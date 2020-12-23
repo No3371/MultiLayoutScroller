@@ -12,7 +12,7 @@ namespace BAStudio.MultiLayoutScroller
         public abstract void SetData (object data);
         protected CanvasGroup canvasGroup;
         internal CanvasGroup CanvasGroup { get => canvasGroup?? (canvasGroup = this.GetComponent<CanvasGroup>()); }
-        public TypeIDPair dataID;
+        public ItemTypeIDPair dataID;
         /// <summary>
         /// Notify that the scroller has loaded this item.
         /// At the moment, the canvas group alpha is set to 1.

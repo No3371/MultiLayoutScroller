@@ -222,7 +222,7 @@ namespace BAStudio.MultiLayoutScroller
             for (int i = 0; i < initPoolSize - 1; i++)
             {
                 ItemInstance ii = GameObject.Instantiate(runtimePrefab);
-                ii.dataID = new TypeIDPair { type = typeID, dataID = -1 };
+                ii.dataID = new ItemTypeIDPair { type = typeID, dataID = -1 };
                 ii.RectTransform.SetParent(hidden.transform, false);
                 stack.Push(ii);
             }

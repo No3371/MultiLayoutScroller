@@ -93,6 +93,7 @@ MonoBehaviour:
     anchorMax: {x: 1, y: 1}
     anchoredPosition: {x: 0, y: 0}
     sizeDelta: {x: 0.0000076293945, y: 0}
+    localScale: {x: 0, y: 0}
   CullByItem: 0
 --- !u!222 &6599750232650864721
 CanvasRenderer:
@@ -146,9 +147,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoBakeOnLoad: 0
   destoryBakedPlaceHolders: 0
-  destroyOnUsed: 0
-  removeOnBuild: 0
-  slots: []
+  destroyOnBaked: 0
+  slots:
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!225 &8722840380556589136
 CanvasGroup:
   m_ObjectHideFlags: 0

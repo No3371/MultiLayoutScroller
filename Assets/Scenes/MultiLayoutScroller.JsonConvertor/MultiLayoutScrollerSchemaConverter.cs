@@ -78,10 +78,10 @@ namespace BAStudio.MultiLayoutScroller
             return layout;
         }
 
-        TypeIDPair ReadItemTypeIDPair (JsonReader reader)
+        ItemTypeIDPair ReadItemTypeIDPair (JsonReader reader)
         {
             if (!reader.Read()) throw new JsonSerializationException("Unexpected end of json object when reading items");
-            TypeIDPair pair;
+            ItemTypeIDPair pair;
             AssurePropName(reader, KEY_ITEM_TYPE);
             if (!ReadAndAssureTokenType(reader, JsonToken.Integer)) ThrowUnexpectedJson("(Int) Item type");
             pair.type = (int) reader.Value;

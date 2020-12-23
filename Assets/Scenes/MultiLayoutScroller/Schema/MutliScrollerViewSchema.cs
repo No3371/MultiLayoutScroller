@@ -13,7 +13,6 @@ namespace BAStudio.MultiLayoutScroller
         public ViewLayoutType viewLayoutType;
         public float autoLayoutSpacing;
         public RectOffset autoLayoutPadding;
-        public bool useUnityPrefabLayout; // For UnityHorizontalLayout/UnityVerticalLayout
         public List<MutliLayoutScrollerLayoutSchema> layouts;
     }
 

@@ -1,6 +1,8 @@
 {
     "name": "BAStudio.MultiLayoutScroller.Editor",
-    "references": [],
+    "references": [
+        "GUID:d63d8310ea2d29949b0778881a521f10"
+    ],
     "includePlatforms": [
         "Editor"
     ],

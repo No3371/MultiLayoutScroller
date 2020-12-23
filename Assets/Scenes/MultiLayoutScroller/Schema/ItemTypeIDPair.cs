@@ -1,15 +1,12 @@
 // MIT License
 // Original author: Mohammed Iqubal Hussain (Polyandcode.com)
 
-using System.Collections.Generic;
-
 namespace BAStudio.MultiLayoutScroller
 {
     [System.Serializable]
-    public class MutliLayoutScrollerLayoutSchema
+    public struct ItemTypeIDPair
     {
-        public int typeID;
-        public List<ItemTypeIDPair> items;
+        public int type, dataID;
     }
 
 
