@@ -19,15 +19,15 @@ namespace BAStudio.MultiLayoutScroller
         {
             for (var i = 0; i < viewPrefabs.Length; i++)
             {
-                targetScroller.DefineViewType(i, viewPrefabs[i]);
+                targetScroller.AssignViewInstance(i, viewPrefabs[i]);
             }
             for (var i = 0; i < layoutPrefabs.Length; i++)
             {
-                targetScroller.DefineLayoutType(i, layoutPrefabs[i], new LayoutTypeMeta { initPoolSize = 5 });
+                targetScroller.AssignLayoutPrefab(i, layoutPrefabs[i], new LayoutTypeMeta { initPoolSize = 5 });
             }
             for (var i = 0; i < itemTypePrefabs.Length; i++)
             {
-                targetScroller.DefineItemType(i, itemTypePrefabs[i], 10);
+                targetScroller.AssginItemPrefab(i, itemTypePrefabs[i], 10);
             }
             BasicDataSource ds = new BasicDataSource();
             for (var i = 0; i < infos.Length; i++)

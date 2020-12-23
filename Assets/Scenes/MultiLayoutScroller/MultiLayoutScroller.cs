@@ -174,17 +174,32 @@ namespace BAStudio.MultiLayoutScroller
             layoutIndexMin = layoutIndexMax = -1;
             activeViewInstance.CanvasGroup.alpha = 0;
         }
-
-        public void DefineViewType (int typeID, ViewInstance prefab) 
+        public void Bind (GameObjectBindings bindings)
         {
-            Assert.IsNotNull(prefab);
-            ViewInstance vi = GameObject.Instantiate(prefab);
+            for (var i = 0; i < bindings.views.Length; i++)
+            {
+                AssignViewInstance(bindings.views[i].ID, bindings.views[i].gameObject.GetComponent<ViewInstance>());
+            }
+            for (var i = 0; i < bindings.layouts.Length; i++)
+            {
+                AssignLayoutPrefab(bindings.layouts[i].id, bindings.layouts[i].gameObject.GetComponent<LayoutInstance>(), bindings.layouts[i].meta);
+            }
+            for (var i = 0; i < bindings.views.Length; i++)
+            {
+                AssginItemPrefab(bindings.items[i].prefabIndex, bindings.items[i].prefab.GetComponent<ItemInstance>(), bindings.items[i].initPoolSize);
+            }
+        }
+
+        public void AssignViewInstance (int typeID, ViewInstance go) 
+        {
+            Assert.IsNotNull(go);
+            ViewInstance vi = GameObject.Instantiate(go);
             vi.enabled = false;
             AssurePool();
             vi.RectTransform.SetParent(hidden.transform, false);
             viewObjects.Add(typeID, vi);
         }
-        public void DefineLayoutType (int typeID, LayoutInstance template, LayoutTypeMeta meta) 
+        public void AssignLayoutPrefab (int typeID, LayoutInstance template, LayoutTypeMeta meta) 
         {
             if (layoutPool == null) layoutPool = new Dictionary<int, Stack<LayoutInstance>>();
             if (layoutTypeMeta == null) layoutTypeMeta = new Dictionary<int, LayoutTypeMeta>(); 
@@ -210,7 +225,7 @@ namespace BAStudio.MultiLayoutScroller
             }
             layoutTypeMeta.Add(typeID, meta);
         }
-        public void DefineItemType (int typeID, ItemInstance template, int initPoolSize) 
+        public void AssginItemPrefab (int typeID, ItemInstance template, int initPoolSize) 
         {
             if (itemPool == null) itemPool = new Dictionary<int, Stack<ItemInstance>>();
             var stack = new Stack<ItemInstance>();
@@ -222,7 +237,7 @@ namespace BAStudio.MultiLayoutScroller
             for (int i = 0; i < initPoolSize - 1; i++)
             {
                 ItemInstance ii = GameObject.Instantiate(runtimePrefab);
-                ii.dataID = new ItemTypeIDPair { type = typeID, dataID = -1 };
+                ii.dataID = new ItemTypeIDPair { type = typeID, id = -1 };
                 ii.RectTransform.SetParent(hidden.transform, false);
                 stack.Push(ii);
             }
@@ -595,7 +610,7 @@ namespace BAStudio.MultiLayoutScroller
             li.OnLoaded();
             for (int i = 0; i < li.items.Length; i++)
             {
-                li.items[i].SetData(DataSource[activeViewSchema.layouts[layoutIndexMax].items[i].dataID]);
+                li.items[i].SetData(DataSource[activeViewSchema.layouts[layoutIndexMax].items[i].id]);
                 li.items[i].OnLoaded();
             }
 
@@ -662,7 +677,7 @@ namespace BAStudio.MultiLayoutScroller
                     li.AssignSameItemPrefabType(i);
                 }
                 
-                li.items[i].SetData(DataSource[schemaItems[i].dataID]);
+                li.items[i].SetData(DataSource[schemaItems[i].id]);
                 li.items[i].CanvasGroup.alpha = 1;
             }
         }

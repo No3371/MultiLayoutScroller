@@ -87,7 +87,7 @@ namespace BAStudio.MultiLayoutScroller
             pair.type = (int) reader.Value;
             AssurePropName(reader, KEY_ITEM_ID);
             if (!ReadAndAssureTokenType(reader, JsonToken.Integer)) ThrowUnexpectedJson("(Int) Item data ID");
-            pair.dataID = (int) reader.Value;
+            pair.id = (int) reader.Value;
             if (!ReadAndAssureTokenType(reader, JsonToken.EndObject)) ThrowUnexpectedJson("(END) Item object");
             return pair;            
         }
