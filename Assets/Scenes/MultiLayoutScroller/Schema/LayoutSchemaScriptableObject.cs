@@ -7,8 +7,8 @@ namespace BAStudio.MultiLayoutScroller
 {
     [CreateAssetMenu(menuName = "MultiLayoutScroller/ScrollerlayoutSchema")]
     [System.Serializable]
-    public class MultiLayoutScrollerLayoutSchemaSO : ScriptableObject
+    public class LayoutSchemaScriptableObject : ScriptableObject
     {
-        public MutliLayoutScrollerLayoutSchema viewSchema;
+        public LayoutSchema viewSchema;
     }
 }

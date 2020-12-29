@@ -6,10 +6,11 @@ using System.Collections.Generic;
 namespace BAStudio.MultiLayoutScroller
 {
     [System.Serializable]
-    public class MutliLayoutScrollerLayoutSchema
+    public class LayoutSchema
     {
         public int typeID;
-        public List<ItemTypeIDPair> items;
+        [UnityEngine.SerializeField] private List<ItemTypeIDPair> items;
+        public List<ItemTypeIDPair> Items { get => items = items ?? new List<ItemTypeIDPair>(); }
     }
 
 

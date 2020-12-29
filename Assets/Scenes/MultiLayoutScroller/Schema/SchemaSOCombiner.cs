@@ -3,23 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace BAStudio.MultiLayoutScroller
-{
-    public static class SchemaSOCombiner
+{   
+    public static class SchemaScriptableObjectOCombiner
     {
-        public static MultiLayoutScrollerSchema CombineScrollerSchema (MultiLayoutScrollerSchemaSO so)
+        public static ScrollerSchema CombineScrollerSchema (ScrollerSchemaScriptableObject so)
         {
             for (var i = 0; i < so.viewAssets.Length; i++)
             {
-                so.schema.views.Add(CombineViewSchema(so.viewAssets[i]));
+                so.schema.Views.Add(CombineViewSchema(so.viewAssets[i]));
             }
             return so.schema;
         }
 
-        public static MutliScrollerViewSchema CombineViewSchema (MultiLayoutScrollerViewSchemaSO so)
+        public static ViewSchema CombineViewSchema (ViewSchemaScriptableObject so)
         {
             for (var i = 0; i < so.layoutAssets.Length; i++)
             {
-                so.viewSchema.layouts.Add(so.layoutAssets[i].viewSchema);
+                so.viewSchema.Layouts.Add(so.layoutAssets[i].viewSchema);
             }
             return so.viewSchema;
         }

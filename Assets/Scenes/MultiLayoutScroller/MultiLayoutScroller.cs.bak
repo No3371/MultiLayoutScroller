@@ -1,6 +1,6 @@
 // MIT License
 // Original author: Mohammed Iqubal Hussain (Polyandcode.com)
-// # define DEBUG_MULTILAYOUT
+# define DEBUG_MULTILAYOUT
 
 using System;
 using System.Collections;
@@ -32,7 +32,6 @@ namespace BAStudio.MultiLayoutScroller
         public int maxLayoutLoadingPerFrame = 1;
         bool shouldLoadMore = false;
         RectTransform root;
-        public bool disallowScrollWhenFullyContained;
         protected override void Awake ()
         {
             viewObjects = new Dictionary<int, ViewInstance>();
@@ -121,16 +120,12 @@ namespace BAStudio.MultiLayoutScroller
             activeViewIndex = switchingTargetViewIndex;
             ViewInstance view = viewObjects[activeViewIndex];
             activeViewInstance = view;
-            movementType = activeViewSchema.movementType;
             SetRecyclingBounds();
             activeViewInstance.RectTransform.GetWorldCorners(viewInstanceWorldCorners);
             if (root == null) root = this.transform.root.transform as RectTransform;
             
             //Setting up container and bounds
             content = view.RectTransform;
-            activeViewInstance.CanvasGroup.alpha = 1;
-            activeViewInstance.CanvasGroup.interactable = true;
-            activeViewInstance.CanvasGroup.blocksRaycasts = true;
             content.SetParent(viewport, false);
             // Make active view match viewport
 
@@ -146,8 +141,6 @@ namespace BAStudio.MultiLayoutScroller
                     content.anchorMax = Vector2.one;   // 1, 1
                     content.pivot = Vector2.up;
                     content.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, CalculateViewSize().x);
-                    if (disallowScrollWhenFullyContained && content.rect.width < viewport.rect.width)
-                        movementType = MovementType.Clamped;
                     PopLayoutRight(false);
                     OnScrolledRight();
                     break;
@@ -159,8 +152,6 @@ namespace BAStudio.MultiLayoutScroller
                     content.pivot = Vector2.up;
                     content.sizeDelta = Vector2.zero;
                     content.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, 0, CalculateViewSize().y);
-                    if (disallowScrollWhenFullyContained && content.rect.height < viewport.rect.height)
-                        movementType = MovementType.Clamped;
                     break;
                 }
                 default:
@@ -204,15 +195,13 @@ namespace BAStudio.MultiLayoutScroller
             }
         }
 
-        public void AssignViewInstance (int viewID, ViewInstance vi) 
+        public void AssignViewInstance (int viewID, ViewInstance go) 
         {
-            Assert.IsNotNull(vi);
-            vi.CanvasGroup.alpha = 0;
-            vi.CanvasGroup.interactable = false;
-            vi.CanvasGroup.blocksRaycasts = false;
-            vi.OnSwitchedAway();
+            Assert.IsNotNull(go);
+            go.OnSwitchedAway();
             AssurePool();
-            viewObjects.Add(viewID, vi);
+            go.RectTransform.SetParent(hidden.transform, false);
+            viewObjects.Add(viewID, go);
             DebugLog("View#{0} assigned.", viewID);
         }
         public void AssignLayoutPrefab (int typeID, LayoutInstance template, LayoutTypeMeta meta) 
@@ -452,12 +441,10 @@ namespace BAStudio.MultiLayoutScroller
                 LayoutInstance li = PopLayout(activeViewSchema.Layouts[layoutIndexMax].typeID);
                 // DebugLog("Popping layout {0}/{1}, it's type {2} and has {3} items", newLayoutIndex, activeViewSchema.layouts.Count - 1, activeViewSchema.layouts[newLayoutIndex].typeID ,activeViewSchema.layouts[newLayoutIndex].items.Count);
                 // DebugLog("Right padding: {0} (-{1})", rightPadding, spacing + (li.transform as RectTransform).rect.width);
-                li.schemaCache = activeViewSchema.Layouts[layoutIndexMax];
                 FillItemsIntoLayout(li, layoutIndexMax);
                 activeViewInstance.AddLayout(layoutIndexMax, li);
                 li.RectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, (activeViewInstance.RectTransform.rect.width - rightPadding + spacing), li.RectTransform.rect.width);
-                li.CanvasGroup.alpha = 1;
-                li.OnLoaded();
+            li.CanvasGroup.alpha = 1;
                 rightPadding -= (li.transform as RectTransform).rect.width;
                 if (activeViewInstance.layouts.Count > 1) rightPadding -= spacing; // There's no spacing if there's only 1 layout
                 DebugLog(" <<< LOAD | Active layouts: {0} ~ {1}", layoutIndexMin, layoutIndexMax);
@@ -509,14 +496,12 @@ namespace BAStudio.MultiLayoutScroller
                 }
                 layoutIndexMin--;
                 LayoutInstance li = PopLayout(activeViewSchema.Layouts[layoutIndexMin].typeID);
-                li.schemaCache = activeViewSchema.Layouts[layoutIndexMax];
                 FillItemsIntoLayout(li, layoutIndexMin);
                 activeViewInstance.AddLayout(layoutIndexMin, li);
                 leftPadding -= ((li.transform as RectTransform).rect.width + spacing);
                 li.RectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, leftPadding, li.RectTransform.rect.width);
                 li.transform.SetAsFirstSibling();
                 li.CanvasGroup.alpha = 1;
-                li.OnLoaded();
                 DebugLog("LOAD >>> | Active layouts: {0} ~ {1}", layoutIndexMin, layoutIndexMax);                
                 loaded++;
                 if (loaded >= maxLayoutLoadingPerFrame)
@@ -550,12 +535,10 @@ namespace BAStudio.MultiLayoutScroller
             LayoutInstance li = PopLayout(activeViewSchema.Layouts[layoutIndexMax].typeID);
             // DebugLog("Popping layout {0}/{1}, it's type {2} and has {3} items", newLayoutIndex, activeViewSchema.layouts.Count - 1, activeViewSchema.layouts[newLayoutIndex].typeID ,activeViewSchema.layouts[newLayoutIndex].items.Count);
             // DebugLog("Right padding: {0} (-{1})", rightPadding, spacing + (li.transform as RectTransform).rect.width);
-            li.schemaCache = activeViewSchema.Layouts[layoutIndexMax];
             FillItemsIntoLayout(li, layoutIndexMax);
             activeViewInstance.AddLayout(layoutIndexMax, li);
             li.RectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, (activeViewInstance.RectTransform.rect.width - rightPadding + spacing), li.RectTransform.rect.width);
             li.CanvasGroup.alpha = 1;
-            li.OnLoaded();
             rightPadding -= (li.transform as RectTransform).rect.width;
             if (activeViewInstance.layouts.Count > 1) rightPadding -= spacing; // There's no spacing if there's only 1 layout
             DebugLog(" <<< LOAD | Active layouts: {0} ~ {1}", layoutIndexMin, layoutIndexMax);
@@ -590,11 +573,9 @@ namespace BAStudio.MultiLayoutScroller
             li.transform.SetAsFirstSibling();
             rightPadding -= (li.transform as RectTransform).rect.width;
             if (hasSpacing) rightPadding -= spacing;
-            li.schemaCache = activeViewSchema.Layouts[layoutIndexMax];
             FillItemsIntoLayout(li, layoutIndexMax);
             li.CanvasGroup.alpha = 1;
             li.OnLoaded();
-            DebugLog("Calling OnLoaded on {0}", li.name);
             for (int i = 0; i < li.items.Length; i++)
             {
                 li.items[i].SetData(DataSource[activeViewSchema.Layouts[layoutIndexMax].Items[i].id]);
@@ -608,11 +589,9 @@ namespace BAStudio.MultiLayoutScroller
         LayoutInstance PopLayout (int layoutTypeID)
         {
             Stack<LayoutInstance> stack = layoutPool[layoutTypeID];
-            LayoutInstance li;
             if (stack.Count <= 1)
-                li = GameObject.Instantiate(stack.Peek());
-            else li = stack.Pop();
-            return li;
+                return GameObject.Instantiate(stack.Peek());
+            else return stack.Pop();
         }
 
         ItemInstance PopItem (int itemTypeID)
@@ -671,7 +650,6 @@ namespace BAStudio.MultiLayoutScroller
                 li.items[i].SetData(DataSource[schemaItems[i].id]);
                 li.items[i].CanvasGroup.alpha = 1;
             }
-            li.LateSiblingIndexOverwrite();
         }
 
         // #region  HELPERS

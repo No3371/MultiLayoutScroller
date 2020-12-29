@@ -7,21 +7,22 @@ using UnityEngine;
 namespace BAStudio.MultiLayoutScroller
 {
     [System.Serializable]
-    public class MutliScrollerViewSchema
+    public class ViewSchema
     {
         public int viewID;
         public ViewLayoutType viewLayoutType;
         public float autoLayoutSpacing;
-        public RectOffset autoLayoutPadding;
-        public List<MutliLayoutScrollerLayoutSchema> layouts;
+        public UnityEngine.UI.ScrollRect.MovementType movementType;
+        private RectOffset autoLayoutPadding;
+        public RectOffset AutoLayoutPadding { get => autoLayoutPadding = autoLayoutPadding?? new RectOffset(); set => autoLayoutPadding = value; }
+        [UnityEngine.SerializeField] private List<LayoutSchema> layouts;
+        public List<LayoutSchema> Layouts { get => layouts = layouts?? new List<LayoutSchema>(); }
     }
 
     public enum ViewLayoutType
     {
         AutoHorizontal,
-        UnityHorizontalLayout,
         AutoVertical,
-        UnityVerticalLayout,
         ManuallyArranged
     }
 

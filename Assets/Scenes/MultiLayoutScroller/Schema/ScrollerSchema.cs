@@ -25,26 +25,11 @@ namespace BAStudio.MultiLayoutScroller
     // }
     // ]
     [System.Serializable]
-    public class MultiLayoutScrollerSchema
+    public class ScrollerSchema
     {
-        public List<MutliScrollerViewSchema> views;
+        [UnityEngine.SerializeField] private List<ViewSchema> views;
+
+        public List<ViewSchema> Views { get => views = views?? new List<ViewSchema>(); }
     }
-
-    // LayoutName: { 0, 1, 4, 2, 11 ,155}  => The layout pulls 
-
-    // MultiLayoutScroller
-    // - View (Where scrolling happening)
-    //   - Layout (A set of predefined item positon&dimension)
-    //     - Item ()
-    
-    // View
-    // View controls how layouts are placed, moved, culled
-
-    // Layouts
-    // A layout is just a set of predefined slots, items get place under the slot transforms
-    // It does not control it's own placement
-
-    // Item
-    // Prefab driving data
 
 }

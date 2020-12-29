@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace BAStudio.MultiLayoutScroller
 {
-    [CustomPropertyDrawer(typeof(MutliLayoutScrollerLayoutSchema), true)]
+    [CustomPropertyDrawer(typeof(LayoutSchema), true)]
     public class LayoutSchemaDrawer : PropertyDrawer
     {
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
@@ -40,10 +40,10 @@ namespace BAStudio.MultiLayoutScroller
                     r.height = EditorGUIUtility.singleLineHeight;
                     r.y += EditorGUIUtility.singleLineHeight;
                     Rect tmpRect = r;
-                    tmpRect.width = 64 + EditorGUIUtility.labelWidth;
+                    tmpRect.width = 48 + EditorGUIUtility.labelWidth;
                     EditorGUI.PropertyField(tmpRect, property.FindPropertyRelative("typeID"));
-                    tmpRect.width = r.width - 64 - 4 - EditorGUIUtility.labelWidth;
-                    tmpRect.x = r.x + 64 + 4 + EditorGUIUtility.labelWidth;
+                    tmpRect.width = r.width - 48 - 4 - EditorGUIUtility.labelWidth;
+                    tmpRect.x = r.x + 48 + 4 + EditorGUIUtility.labelWidth;
                     if (TypeIndex.LayoutTypes.ContainsKey(type)) EditorGUI.HelpBox(tmpRect, TypeIndex.LayoutTypes[type], MessageType.Info);
                     else EditorGUI.HelpBox(tmpRect, "Unnamed type", MessageType.Info);
                     r.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;

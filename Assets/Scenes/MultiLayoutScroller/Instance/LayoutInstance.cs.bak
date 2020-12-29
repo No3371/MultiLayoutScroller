@@ -10,35 +10,22 @@ namespace BAStudio.MultiLayoutScroller
     {
         public RectTransform RectTransform=> (this.transform as RectTransform);
         [SerializeField] internal RectTransformData[] slotsBaked;
-        [SerializeField] internal int[] slotsSibingIndex;
         internal ItemInstance[] items;
         protected CanvasGroup canvasGroup;
         internal CanvasGroup CanvasGroup { get => canvasGroup?? (canvasGroup = this.GetComponent<CanvasGroup>()); }
-        internal LayoutSchema schemaCache;
         public UnityEvent onLoadedCallbacks, onPooledCallbacks;
 
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-        internal virtual void Assign(int slotIndex, ItemInstance item)
+        internal void Assign(int slotIndex, ItemInstance item)
         {
             item.transform.SetParent(RectTransform, false);
             slotsBaked[slotIndex].Overwrite((RectTransform) item.transform);
-            item.OnAssigned(schemaCache.typeID, this);
             items[slotIndex] = item;
         }
 
-        internal virtual void AssignSameItemPrefabType (int slotIndex)
+        internal void AssignSameItemPrefabType (int slotIndex)
         {
             slotsBaked[slotIndex].Overwrite((RectTransform) items[slotIndex].transform);
-            items[slotIndex].OnAssigned(schemaCache.typeID, this);
-        }
-
-        internal void LateSiblingIndexOverwrite ()
-        {
-            if (slotsSibingIndex == null || slotsSibingIndex.Length == 0) return;
-            for (var i = 0; i < items.Length; i++)
-            {
-                items[i].transform.SetSiblingIndex(slotsSibingIndex[i]);
-            }
         }
 
         public bool CullByItem; // Should the scroller scan through and try to load/unload items 
@@ -47,7 +34,7 @@ namespace BAStudio.MultiLayoutScroller
         /// Notify that the scroller has loaded this layout.
         /// At the moment, the canvas group alpha is set to 1.
         /// </summary>
-        protected internal virtual void OnLoaded ()
+        internal virtual void OnLoaded ()
         {
             onLoadedCallbacks?.Invoke();
         }
@@ -55,7 +42,7 @@ namespace BAStudio.MultiLayoutScroller
         /// Notify that the scroller has pooled this layout.
         /// At the moment, the canvas group alpha is set to 0.
         /// </summary>
-        protected internal virtual void OnPooled ()
+        internal virtual void OnPooled ()
         {
             onPooledCallbacks?.Invoke();
         }
@@ -75,7 +62,7 @@ namespace BAStudio.MultiLayoutScroller
     }
 
     [System.Serializable]
-    public struct RectTransformData
+    struct RectTransformData
     {
         public Vector2 anchorMin, anchorMax, anchoredPosition, sizeDelta, localScale, pivot;
         public RectTransformData (RectTransform source)

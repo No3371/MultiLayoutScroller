@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace BAStudio.MultiLayoutScroller
 {
@@ -11,6 +12,7 @@ namespace BAStudio.MultiLayoutScroller
         public RectTransform RectTransform=> (this.transform as RectTransform);
         protected CanvasGroup canvasGroup;
         internal CanvasGroup CanvasGroup { get => canvasGroup?? (canvasGroup = this.GetComponent<CanvasGroup>()); }
+        public UnityEvent onSwitchingToCallbacks, onSwitchedToCallbacks, onSwitchingAwayCallbacks, onSwitchedAwayCallbacks;
         [HideInInspector] public Dictionary<int, LayoutInstance> layouts;
         internal void AddLayout (int index, LayoutInstance layout)
         {
@@ -23,21 +25,35 @@ namespace BAStudio.MultiLayoutScroller
         /// Use this for starting visual transition.
         /// At the moment, the canvas group alpha is set to 1.
         /// </summary>
-        internal virtual void OnSwitchingTo (IViewTransitionHost scroller) { scroller.SignalTransitionFinished(this); }
+        internal virtual void OnSwitchingTo (IViewTransitionHost scroller)
+        {
+            onSwitchingToCallbacks?.Invoke();
+            scroller.SignalTransitionFinished(this);
+        }
         /// <summary>
         /// Notify that the scroller is switching away from view, the view is still present in the scroller
         /// Use this for starting visual transition.
         /// </summary>
-        internal virtual void OnSwitchingAway (IViewTransitionHost scroller) { scroller.SignalTransitionFinished(this); }
+        internal virtual void OnSwitchingAway (IViewTransitionHost scroller)
+        {
+            onSwitchingAwayCallbacks?.Invoke();
+            scroller.SignalTransitionFinished(this);
+        }
         /// <summary>
         /// Notify that the scroller is swithced to this view,
         /// </summary>
-        internal virtual void OnSwitchedTo() {}
+        internal virtual void OnSwitchedTo()
+        {
+            onSwitchedToCallbacks?.Invoke();
+        }
         /// <summary>
         /// Notify that the scroller is swithced away from this view,
         /// At the moment, the canvas group alpha is set to 0.
         /// </summary>
-        internal virtual void OnSwitchedAway() {}
+        internal virtual void OnSwitchedAway()
+        {
+            onSwitchedAwayCallbacks?.Invoke();
+        }
     }
 
     // LayoutName: { 0, 1, 4, 2, 11 ,155}  => The layout pulls 

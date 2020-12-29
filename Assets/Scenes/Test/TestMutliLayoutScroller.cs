@@ -13,7 +13,7 @@ namespace BAStudio.MultiLayoutScroller
         public ItemInstance[] itemTypePrefabs;
         public MultiLayoutScroller targetScroller;
         public GameInfo[] infos;
-        public MultiLayoutScrollerSchemaSO madeSchema;
+        public ScrollerSchemaScriptableObject madeSchema;
 
         void Start ()
         {
