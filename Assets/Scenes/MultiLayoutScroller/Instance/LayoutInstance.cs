@@ -8,12 +8,12 @@ namespace BAStudio.MultiLayoutScroller
 {
     public class LayoutInstance : MonoBehaviour
     {
-        public RectTransform RectTransform=> (this.transform as RectTransform);
+        public RectTransform RectTransform => (RectTransform) this.transform;
         [SerializeField] internal RectTransformData[] slotsBaked;
         [SerializeField] internal int[] slotsSibingIndex;
         internal ItemInstance[] items;
         protected CanvasGroup canvasGroup;
-        internal CanvasGroup CanvasGroup { get => canvasGroup?? (canvasGroup = this.GetComponent<CanvasGroup>()); }
+        protected internal CanvasGroup CanvasGroup { get => canvasGroup?? (canvasGroup = this.GetComponent<CanvasGroup>()); }
         internal LayoutSchema schemaCache;
         public UnityEvent onLoadedCallbacks, onPooledCallbacks;
 
@@ -41,13 +41,11 @@ namespace BAStudio.MultiLayoutScroller
             }
         }
 
-        public bool CullByItem; // Should the scroller scan through and try to load/unload items 
-
         /// <summary>
         /// Notify that the scroller has loaded this layout.
         /// At the moment, the canvas group alpha is set to 1.
         /// </summary>
-        protected internal virtual void OnLoaded ()
+        protected internal virtual void OnLoaded (int hostViewID, int indexInView, bool isViewSwitch)
         {
             onLoadedCallbacks?.Invoke();
         }
@@ -69,6 +67,21 @@ namespace BAStudio.MultiLayoutScroller
                 var p = new GameObject("Placeholder" + i, typeof(RectTransform));
                 p.transform.SetParent(this.transform);
                 slotsBaked[i].Overwrite(p.transform as RectTransform);
+            }
+        }
+
+        [ContextMenu("CopyConfigToAnotherInstance")]
+        public void CopyConfigToAnotherInstance ()
+        {
+            foreach (var i in this.GetComponents<LayoutInstance>())
+            {
+                if (i == this) continue;
+
+                i.onLoadedCallbacks = this.onLoadedCallbacks;
+                i.onPooledCallbacks = this.onPooledCallbacks;
+                i.slotsBaked = this.slotsBaked;
+                i.slotsSibingIndex = this.slotsSibingIndex;
+                break;
             }
         }
         #endif
