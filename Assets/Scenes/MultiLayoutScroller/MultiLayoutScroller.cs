@@ -314,7 +314,7 @@ namespace BAStudio.MultiLayoutScroller
         }
         
         protected Bounds recyclingleViewBounds;
-        protected float RecyclingThreshold = .1f; //Threshold for recycling above and below viewport
+        public float RecyclingThreshold { get; set; } = .1f; //Threshold for recycling above and below viewport
         //Temps, Flags
         protected Vector3[] recyclingViewBoundsCorners, viewInstanceWorldCorners, tempWorldCorners;
         protected bool _working;
