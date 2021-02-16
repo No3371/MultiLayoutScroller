@@ -16,7 +16,7 @@ As you may have noticed, the item schema only contains item ID, not actual data 
 
 Because everything is based on data, **we can even dynamically generate/modify contents on the fly, or store the data in ways**, jsons, scriptable objects, online resources, you name it.
 
-![](Docs/2021-02-16-00-19-38.png)
+![](Docs/2021-02-16-02-54-32.png)
 
 ## Layout vs Item
 To correctly use the system, it's important to remember that it's layout that gets scrolled, not item. Layout act as "item group", whether it's a single item group or a multi-item group, it get scrolled as a whole. Item instances are placed relative to its host (layout instance), the enables multiple layout to be easily managed in single scroller.
